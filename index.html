@@ -1,0 +1,3538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nishtha & Manish— Wedding</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html { scroll-behavior:smooth; }
+body { background:var(--dark-bg); font-family:'Cormorant Garamond', serif; overflow-x: hidden; overflow-y: hidden; color:var(--text-cream); -webkit-overflow-scrolling:touch; cursor:pointer; }
+
+/* ===== SHARED DARK CINEMATIC VARIABLES ===== */
+:root {
+  --dark-bg:      #0d0208;
+  --dark-mid:     #1a0410;
+  --dark-rich:    #2d0820;
+  --gold-bright:  #f5d060;
+  --gold-mid:     #c8980a;
+  --gold-dim:     #9a7a3a;
+  --gold-glow:    rgba(245,208,80,0.15);
+  --text-cream:   #f5e8c8;
+  --text-muted:   rgba(245,232,200,0.55);
+  --border-gold:  rgba(200,152,10,0.35);
+  --off-white:    #fdfaf0;
+  --cream-glow:   rgba(253, 250, 240, 0.15);
+  --off-white-glow: rgba(253, 250, 240, 0.12);
+  --border-muted: rgba(253, 250, 240, 0.3);
+  --glass-bg:     rgba(255, 255, 255, 0.02);
+  --glass-blur:   blur(12px);
+  --transition:   all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+
+}
+
+.event-item { position:relative; }
+.dc-badge {
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  font-family:'Cinzel',serif; font-size:9px; letter-spacing:1px;
+  color:var(--gold-dim); border:1px solid rgba(200,152,10,0.3);
+  border-radius:20px; padding:4px 10px; cursor:pointer;
+  background:rgba(245,208,80,0.05); white-space:nowrap;
+  transition:all 0.2s;
+}
+.dc-badge:hover, .dc-badge.open { background:rgba(245,208,80,0.14); border-color:var(--gold-mid); color:var(--off-white); }
+.dc-tooltip {
+  display:none; position:absolute; right:12px; top:calc(50% + 22px);
+  background:linear-gradient(135deg,#1e0c16,#120608);
+  border:1px solid rgba(200,152,10,0.4); border-radius:6px;
+  padding:8px 14px; font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:13px; color:var(--text-cream);
+  z-index:100; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.6);
+}
+.dc-badge.open + .dc-tooltip { display:block; }
+
+/* ===== SPARKLE PARTICLE ===== */
+#sparkleWrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none !important;
+  z-index: 100;
+}
+
+.sparkle {
+  position: absolute;
+  background: radial-gradient(circle, var(--gold-bright) 10%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  /* Simplified animation: only handles the twinkling glow */
+  animation: sparkleTwinkle 4s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--gold-bright);
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 0.8; transform: scale(1); }
+}
+
+/*@keyframes sparkleAnim {
+  0%,100% { opacity:0; transform:scale(0) rotate(0deg); }
+  20%      { opacity:1; transform:scale(1) rotate(90deg); }
+  80%      { opacity:0.5; transform:scale(1) rotate(270deg); }
+}*/
+
+/* ===== GOLD FLASH ===== */
+#gold-flash {
+  position:fixed; inset:0; z-index:10000;
+  background:radial-gradient(ellipse at center, #f5d060 0%, #c8800a 60%, transparent 100%);
+  opacity:0; pointer-events:none; transition:opacity 0.25s ease;
+}
+#gold-flash.flash { opacity:0.5; }
+
+/* ===== ROTATING RAYS (reusable) ===== */
+.rays-bg {
+  position:absolute; top:50%; left:50%;
+  width:200%; height:200%;
+  transform:translate(-50%,-50%);
+  animation:raysRotate 30s linear infinite;
+  opacity:0.1; pointer-events:none; z-index:0;
+}
+@keyframes raysRotate { to { transform:translate(-50%,-50%) rotate(360deg); } }
+
+/* ======================================================
+   INTRO SCREEN
+====================================================== */
+#intro-screen {
+  position:fixed; inset:0; z-index:9999;
+  background:radial-gradient(ellipse at 50% 40%, #2d0820 0%, #1a0410 40%, #0d0208 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  overflow:hidden; cursor:pointer;
+  transition:opacity 1.4s ease, visibility 1.4s ease;
+}
+#intro-screen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+
+/* Mandala */
+.mandala-stage { position:relative; width:min(300px,75vmin); height:min(300px,75vmin); flex-shrink:0; }
+.mandala-svg   { width:100%; height:100%; overflow:visible; }
+
+/* transform-box:fill-box on each class ensures scale() in keyframes
+   always originates from the ring's own geometric centre (200 200 in SVG space)
+   regardless of any CSS transform applied to a parent HTML element.          */
+.m-r6 { opacity:0; animation:ringIn 0.7s ease forwards 0.3s;  transform-box:view-box; transform-origin:200px 200px; }
+.m-r5 { opacity:0; animation:ringIn 0.7s ease forwards 0.7s;  transform-box:view-box; transform-origin:200px 200px; }
+.m-r4 { opacity:0; animation:ringIn 0.7s ease forwards 1.1s;  transform-box:view-box; transform-origin:200px 200px; }
+.m-r3 { opacity:0; animation:ringIn 0.7s ease forwards 1.5s;  transform-box:view-box; transform-origin:200px 200px; }
+.m-r2 { opacity:0; animation:ringIn 0.7s ease forwards 1.9s;  transform-box:view-box; transform-origin:200px 200px; }
+.m-r1 { opacity:0; animation:ringIn 0.7s ease forwards 2.2s;  transform-box:view-box; transform-origin:200px 200px; }
+.m-center { opacity:0; animation:centerReveal 1.2s cubic-bezier(0.2,0.8,0.3,1) forwards 2.6s; transform-box:view-box; transform-origin:200px 200px; }
+
+/* transform-box removed from keyframes — it belongs on the element, not the keyframe */
+@keyframes ringIn     { from{opacity:0;transform:scale(0.6)} to{opacity:1;transform:scale(1)} }
+@keyframes centerReveal { 0%{opacity:0;transform:scale(0.4)} 60%{opacity:1;transform:scale(1.06)} 100%{opacity:1;transform:scale(1)} }
+
+/* transform-box:view-box anchors the origin to SVG coordinate space (200,200).
+   This means even if a parent HTML element has a CSS transform applied,
+   the rotation pivot stays locked at the mandala's true centre.              */
+.m-outer-spin { animation:outerSpin 28s linear infinite 3s; transform-origin:200px 200px; transform-box:view-box; }
+.m-inner-spin { animation:innerSpin 20s linear infinite reverse 3s; transform-origin:200px 200px; transform-box:view-box; }
+@keyframes outerSpin { to { transform:rotate(360deg); } }
+@keyframes innerSpin { to { transform:rotate(360deg); } }
+
+/* Intro text */
+.intro-text-wrap { text-align:center; margin-top:24px; padding:0 20px; opacity:0; animation:fadeUp 1.2s ease forwards 3.8s; }
+.intro-tagline { font-family:'Cinzel',serif; font-size:9px; letter-spacing:5px; text-transform:uppercase; color:rgba(245,208,80,0.55); margin-bottom:10px; }
+.intro-names   { font-family:'Great Vibes',cursive; font-size:clamp(40px,11vw,62px); color:var(--gold-bright); line-height:1.05; text-shadow:0 0 30px rgba(245,190,60,0.5),0 2px 10px rgba(0,0,0,0.6); }
+.intro-names .i-amp { font-family:'Cormorant Garamond',serif; font-size:0.5em; font-style:italic; color:rgba(245,208,80,0.75); vertical-align:middle; }
+.intro-date    { font-family:'Cormorant Garamond',serif; font-size:14px; letter-spacing:3px; font-style:italic; color:rgba(245,208,80,0.55); margin-top:6px; }
+.intro-tap     { margin-top:28px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--gold-bright); opacity:0; animation:breathePulse 2.5s ease-in-out infinite 5s, fadeUp 1s ease forwards 5s; background:rgba(245,208,80,0.1); border:1.5px solid rgba(245,208,80,0.55); border-radius:40px; padding:14px 34px; cursor:pointer; display:inline-block; box-shadow:0 0 22px rgba(245,190,60,0.18),inset 0 0 16px rgba(245,190,60,0.06); user-select:none; }
+@keyframes breathePulse { 0%,100%{opacity:0.3} 50%{opacity:0.9} }
+
+/* ======================================================
+   MAIN APP — hero
+====================================================== */
+#app { opacity:0; transition:opacity 1s ease; }
+#app.visible { opacity:1; }
+
+.hero {
+  position:relative; min-height:100svh;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding-top:52px; padding-bottom:40px; overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%, #3d1428 0%, #1e0810 40%, #0d0208 100%);
+}
+.hero-light {
+  position:absolute; bottom:0%; left:50%; transform:translateX(-50%);
+  width:140%; height:50%;
+  background:radial-gradient(ellipse at center bottom, rgba(245,208,60,0.12) 0%, transparent 70%);
+  z-index:1;
+}
+.palace-wrap {
+  position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:350px; z-index:2; opacity:0.45;
+}
+.couple-wrap {
+  position:relative; z-index:4;
+  animation:coupleFloat 3s ease-in-out infinite;
+  margin-top:18px; display:flex; justify-content:center;
+}
+@keyframes coupleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+.petal { position:absolute; z-index:3; font-size:14px; opacity:0.4; animation:petalDrift linear infinite; pointer-events:none; }
+@keyframes petalDrift { 0%{transform:translateY(-10px) rotate(0deg);opacity:0.6} 100%{transform:translateY(100vh) rotate(540deg) translateX(40px);opacity:0} }
+
+.hero-text { position:relative; z-index:5; text-align:center; width:100%; padding:0 20px; }
+.hero-tagline { font-family:'Cinzel',serif; font-size:10px; letter-spacing:5px; color:rgba(245,208,80,0.7); text-transform:uppercase; text-shadow:0 1px 8px rgba(0,0,0,0.5); margin-bottom:12px; display:block; }
+.hero-names-big { font-family:'Great Vibes',cursive; font-size:clamp(52px,14vw,80px); color:#fff8e8; line-height:1.0; text-shadow:0 2px 20px rgba(200,140,10,0.6),0 0 50px rgba(245,208,80,0.2); }
+.hero-names-big .amp-line { display:block; font-size:0.38em; color:rgba(245,208,80,0.8); letter-spacing:8px; margin:4px 0; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; }
+.hero-date-tag { display:inline-block; margin-top:16px; font-family:'Cinzel',serif; font-size:12px; letter-spacing:3px; color:rgba(245,208,80,0.85); border-top:1px solid rgba(245,208,80,0.3); border-bottom:1px solid rgba(245,208,80,0.3); padding:8px 22px; }
+.scroll-down { position:relative; z-index:5; margin-top:20px; color:rgba(245,208,80,0.4); font-size:22px; animation:bounce 1.5s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+/* ======================================================
+   SHARED PAGE LAYOUT (dark cinematic)
+====================================================== */
+.page {
+  position:relative; padding:60px 24px; overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%, #2d1020 0%, #1a0810 50%, #0d0208 100%);
+}
+.page::before {
+  content:''; position:absolute; top:0; left:10%; right:10%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,152,10,0.5),transparent);
+}
+
+/* Decorative gold mandala watermark behind each section */
+.page-mandala-bg {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:min(500px,90vw); height:min(500px,90vw);
+  opacity:0.03; pointer-events:none; z-index:0;
+}
+
+.sec-label { font-family:'Cinzel',serif; font-size:9px; letter-spacing:5px; color:var(--gold-dim); text-transform:uppercase; text-align:center; margin-bottom:10px; position:relative; z-index:1; }
+.sec-title { font-family:'Great Vibes',cursive; font-size:clamp(36px,9vw,52px); color:var(--gold-bright); text-align:center; line-height:1.1; margin-bottom:6px; position:relative; z-index:1; text-shadow:0 0 30px rgba(245,190,60,0.3); }
+.gold-rule { width:100px; height:1px; margin:16px auto 32px; background:linear-gradient(90deg,transparent,var(--gold-mid),transparent); position:relative; z-index:1; }
+
+/* ======================================================
+   COUNTDOWN
+====================================================== */
+.countdown-section {
+  position:relative; padding:52px 24px; text-align:center; overflow:hidden;
+  background:radial-gradient(ellipse at 50% 50%, #1e0a14 0%, #120408 100%);
+}
+.countdown-section::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(200,152,10,0.5),transparent); }
+.countdown-section::after  { content:''; position:absolute; bottom:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(200,152,10,0.5),transparent); }
+
+.cd-label { font-family:'Cinzel',serif; font-size:9px; letter-spacing:5px; text-transform:uppercase; color:var(--gold-dim); margin-bottom:6px; position:relative;z-index:1; }
+.cd-title { font-family:'Great Vibes',cursive; font-size:clamp(28px,7vw,40px); color:var(--gold-bright); margin-bottom:28px; text-shadow:0 0 20px rgba(245,190,60,0.3); position:relative;z-index:1; }
+.cd-grid  { display:flex; justify-content:center; gap:clamp(8px,3vw,24px); position:relative;z-index:1; }
+.cd-unit  { display:flex; flex-direction:column; align-items:center; }
+.cd-num   { font-family:'Cinzel',serif; font-size:clamp(30px,8vw,50px); color:var(--gold-bright); line-height:1; text-shadow:0 0 20px rgba(245,190,60,0.4); background:rgba(245,208,80,0.05); border:1px solid rgba(200,152,10,0.3); border-radius:4px; padding:8px clamp(8px,2.5vw,14px); min-width:clamp(54px,14vw,72px); text-align:center; transition:all 0.3s; }
+.cd-unit-label { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-top:8px; }
+.cd-sep { font-size:clamp(28px,7vw,40px); color:rgba(245,208,80,0.25); align-self:center; margin-top:-8px; animation:sepBlink 1s ease-in-out infinite; }
+@keyframes sepBlink { 0%,100%{opacity:0.2} 50%{opacity:0.7} }
+.cd-expired { font-family:'Great Vibes',cursive; font-size:32px; color:var(--gold-bright); padding:16px; }
+
+/* ======================================================
+   DIYA ROW (decorative, used between sections)
+====================================================== */
+.diya-row { display:flex; justify-content:center; align-items:center; gap:clamp(12px,4vw,32px); padding:16px 0; position:relative; z-index:1; }
+.diya-row canvas { display:block; }
+
+/* ======================================================
+   EVENTS (Premium Timeline Style - Theme Aware)
+====================================================== */
+.events { 
+  display: flex; flex-direction: column; gap: 24px; max-width: 540px; 
+  margin: 0 auto; position: relative; z-index: 1; padding: 0 8px; 
+}
+
+/* Premium Vertical Timeline Line */
+.events::before { 
+  content: ''; position: absolute; left: 46px; top: 32px; bottom: 32px; 
+  width: 1px; background: linear-gradient(to bottom, transparent, var(--gold-mid), transparent); 
+  opacity: 0.4; z-index: 0; 
+}
+
+.event-item {
+  display: flex; align-items: flex-start; gap: 24px; padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); overflow: hidden; position: relative; z-index: 1;
+  /* ADD THIS LINE FOR A PERMANENT STILL SHADOW */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.event-item:hover { 
+  transform: translateY(-2px); 
+  border-color: var(--gold-mid); /* ⬅️ Dynamic Theme Color */
+  box-shadow: 0 8px 30px var(--dark-bg); /* ⬅️ Dynamic Theme Glow */
+  background: rgba(255,255,255,0.04); 
+}
+
+/* Circled Icons */
+.event-icon { 
+  width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; background: color-mix(in srgb, var(--dark-bg), white 5%);
+  border: 1px solid var(--border-gold); /* ⬅️ Dynamic Theme Color */
+  border-radius: 50%; 
+  box-shadow: 0 0 15px var(--gold-glow); /* ⬅️ Dynamic Theme Glow */
+  z-index: 2;
+}
+
+.event-info { position: relative; z-index: 1; padding-top: 4px; flex: 1; }
+
+.event-name { 
+  font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold-bright); 
+  letter-spacing: 1.5px; margin-bottom: 6px; 
+}
+
+.event-detail { 
+  font-size: 15px; color: var(--text-muted); line-height: 1.6; font-style: italic; 
+}
+
+/* ======================================================
+   VENUE
+====================================================== */
+.venue-box { max-width:500px; margin:0 auto; background:rgba(245,208,80,0.03); border:1px solid rgba(200,152,10,0.25); border-radius:8px; overflow:hidden; position:relative; z-index:1; }
+.venue-sketch { width:100%; padding:28px 20px 0; display:flex; align-items:center; justify-content:center; }
+.venue-sketch svg .sketch { fill:none; stroke:var(--gold-dim); }
+.venue-info { padding:24px; text-align:center; }
+.venue-name-script { font-family:'Great Vibes',cursive; font-size:clamp(28px,7vw,38px); color:var(--gold-bright); margin-bottom:8px; text-shadow:0 0 20px rgba(245,190,60,0.2); }
+.venue-address { font-size:14px; color:var(--text-muted); line-height:1.8; font-style:italic; margin-bottom:20px; }
+.map-area { position:relative; height:180px; overflow:hidden; border-top:1px solid rgba(200,152,10,0.2); }
+.map-area iframe { width:100%; height:100%; border:none; filter:sepia(0.8) saturate(0.6) brightness(0.6) hue-rotate(340deg); pointer-events:none; }
+.map-overlay { position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center; padding-bottom:14px; background:linear-gradient(to bottom, transparent 40%, rgba(10,2,6,0.7) 100%); }
+.open-maps-btn { display:inline-flex; align-items:center; gap:7px; background:rgba(245,208,80,0.12); color:var(--gold-bright); font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:10px 22px; border-radius:30px; text-decoration:none; border:1px solid rgba(200,152,10,0.5); transition:all 0.25s; backdrop-filter:blur(4px); }
+.open-maps-btn:hover { background:rgba(245,208,80,0.22); transform:translateY(-2px); }
+
+/* ======================================================
+   RSVP
+====================================================== */
+.rsvp-box { max-width:460px; margin:0 auto; background:rgba(245,208,80,0.03); border:1px solid rgba(200,152,10,0.25); border-radius:8px; padding:32px 24px; position:relative; z-index:1; }
+.field { margin-bottom:18px; }
+.field label { display:block; font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:8px; }
+.field input, .field select { width:100%; background:rgba(245,208,80,0.04); border:1px solid rgba(200,152,10,0.3); color:var(--text-cream); font-family:'Cormorant Garamond',serif; font-size:17px; padding:12px 16px; border-radius:3px; outline:none; transition:border-color 0.3s; -webkit-appearance:none; }
+.field input::placeholder { color:var(--text-muted); }
+.field input:focus, .field select:focus { border-color:var(--gold-mid); background:rgba(245,208,80,0.08); }
+.field select option { background:#1a0810; color:var(--text-cream); }
+.rsvp-btn { width:100%; background:linear-gradient(135deg,#6a3800 0%,#c8980a 50%,#6a3800 100%); color:#fffbee; font-family:'Cinzel',serif; font-size:11px; letter-spacing:4px; text-transform:uppercase; padding:16px; border:none; border-radius:3px; cursor:pointer; transition:all 0.25s; margin-top:8px; }
+.rsvp-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(200,140,10,0.4); }
+.rsvp-btn:disabled { opacity:0.5; cursor:default; }
+.rsvp-success { display:none; text-align:center; font-family:'Great Vibes',cursive; font-size:28px; color:var(--gold-bright); padding:20px; line-height:1.5; }
+.rsvp-success.show { display:block; animation:fadeIn 0.6s ease; }
+
+/* ======================================================
+   FOOTER
+====================================================== */
+.footer { background:radial-gradient(ellipse at 50% 0%, #2d1020 0%, #0d0208 100%); padding:60px 24px 100px; text-align:center; position:relative; overflow:hidden; }
+.footer::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(200,152,10,0.5),transparent); }
+.footer-names { font-family:'Great Vibes',cursive; font-size:42px; color:var(--gold-bright); margin-bottom:12px; line-height:1.2; text-shadow:0 0 24px rgba(245,190,60,0.3); position:relative; z-index:1; }
+.footer-sub { font-size:13px; letter-spacing:3px; font-style:italic; color:var(--text-muted); position:relative; z-index:1; }
+.footer-venue { margin-top:24px; font-family:'Cinzel',serif; font-size:10px; letter-spacing:3px; color:rgba(245,208,80,0.25); position:relative; z-index:1; }
+
+/* ======================================================
+   FLOATING BUTTONS
+====================================================== */
+.floats { position:fixed; bottom:76px; right:16px; z-index:10001; display:flex; flex-direction:column; gap:10px; pointer-events: none; -webkit-transform: translateZ(0); transform: translateZ(0); }
+.fb { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; border:none; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.5); transition:transform 0.2s; position:relative; pointer-events: auto; }
+.fb.f-theme { background:linear-gradient(135deg,#4a1a8a,#7a3aba); }
+.fb.f-edit  { background:linear-gradient(135deg,#8a1a10,#c03020); }
+.fb.f-music { background:linear-gradient(135deg,#1a3a5a,#2a70aa); }
+
+/* Admin capsule button — fixed bottom-RIGHT corner */
+.admin-capsule {
+  position:fixed; bottom:20px; right:16px; z-index:10002;
+  display:flex; align-items:center; gap:8px;
+  background:linear-gradient(135deg,#1a4a1a,#2a7a2a);
+  color:#d8f0d8; font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; padding:10px 18px; border:none; border-radius:30px;
+  cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.5);
+  transition:transform 0.2s, box-shadow 0.2s;pointer-events: all; pointer-events: auto;
+}
+
+.fb-tip { position:absolute; right:54px; top:50%; transform:translateY(-50%); background:rgba(10,4,8,0.95); border:1px solid rgba(200,152,10,0.3); color:var(--text-cream); font-family:'Cinzel',serif; font-size:10px; letter-spacing:1px; white-space:nowrap; padding:6px 12px; border-radius:20px; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+
+/* 🟢 FIX: ONLY APPLY HOVER IF USING A MOUSE */
+@media (hover: hover) {
+  .fb:hover { transform:scale(1.12); }
+  .admin-capsule:hover { transform:scale(1.05); box-shadow:0 6px 20px rgba(0,0,0,0.6); }
+  .fb:hover .fb-tip { opacity:1; }
+}
+
+/* ======================================================
+   MODALS — slide-in side panel (no full-screen darkening)
+====================================================== */
+.overlay { position:fixed; inset:0; z-index:10005; background:transparent; display:none; align-items:flex-end; justify-content:flex-end; padding:0; pointer-events:none; }
+.overlay.open { display:flex; pointer-events: auto;}
+.modal {
+  background:linear-gradient(160deg,#1e0c16 0%,#120608 100%);
+  border:1px solid rgba(200,152,10,0.3);
+  border-left:2px solid rgba(200,152,10,0.5);
+  border-radius:12px 0 0 12px;
+  padding:28px 24px;
+  width:min(340px,90vw);
+  max-height:85vh;
+  overflow-y:auto;
+  position:relative;
+  color:var(--text-cream);
+  box-shadow:-12px 0 50px rgba(0,0,0,0.85), -2px 0 20px rgba(200,152,10,0.1);
+  animation:slideInRight 0.28s cubic-bezier(0.22,0.8,0.3,1);
+  pointer-events:all;
+  z-index:1;
+  align-self:flex-end;
+}
+@keyframes slideInRight { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+.modal h3 { font-family:'Cinzel',serif; font-size:14px; letter-spacing:2px; color:var(--gold-bright); margin-bottom:20px; text-align:center; }
+.mclose { position:absolute; top:12px; right:16px; background:none; border:none; font-size:22px; color:var(--gold-dim); cursor:pointer; line-height:1; }
+.theme-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.tbtn { padding:16px 12px; border:1px solid rgba(200,152,10,0.3); border-radius:4px; cursor:pointer; text-align:center; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold-dim); background:rgba(245,208,80,0.03); transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.tbtn span { font-size:22px; }
+.tbtn:hover, .tbtn.on { background:rgba(245,208,80,0.1); border-color:var(--gold-mid); color:var(--gold-bright); }
+.ef { margin-bottom:14px; }
+.ef label { display:block; font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:6px; }
+.ef input { width:100%; background:rgba(245,208,80,0.05); border:1px solid rgba(200,152,10,0.3); color:var(--text-cream); font-family:'Cormorant Garamond',serif; font-size:15px; padding:10px 12px; border-radius:3px; outline:none; }
+.ef input:focus { border-color:var(--gold-mid); }
+.ef input::placeholder { color:var(--text-muted); }
+.save-btn { width:100%; background:linear-gradient(135deg,#6a3800,#c8980a,#6a3800); color:#fffbee; font-family:'Cinzel',serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; padding:13px; border:none; border-radius:3px; cursor:pointer; margin-top:8px; }
+.admin-pwd-wrap { text-align:center; }
+.admin-pwd-wrap input { background:rgba(245,208,80,0.05); border:1px solid rgba(200,152,10,0.3); color:var(--text-cream); font-family:'Cormorant Garamond',serif; font-size:20px; letter-spacing:6px; padding:12px 20px; border-radius:3px; outline:none; text-align:center; width:100%; max-width:220px; display:block; margin:0 auto 12px; }
+.admin-go { background:linear-gradient(135deg,#1a4a1a,#2a7a2a); color:#d8f0d8; font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:11px 28px; border:none; border-radius:3px; cursor:pointer; }
+.admin-err { color:#e05050; font-size:13px; margin-top:8px; display:none; }
+.admin-data { display:none; }
+.admin-data.show { display:block; }
+.big-num { font-family:'Great Vibes',cursive; font-size:56px; color:var(--gold-bright); text-align:center; line-height:1; }
+.big-lbl { font-size:13px; color:var(--gold-dim); text-align:center; letter-spacing:2px; margin-bottom:20px; font-style:italic; }
+.rtable { width:100%; border-collapse:collapse; font-size:13px; }
+.rtable th { font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px; color:var(--gold-dim); text-transform:uppercase; padding:8px 6px; border-bottom:1px solid rgba(200,152,10,0.3); text-align:left; }
+.rtable td { padding:8px 6px; border-bottom:1px solid rgba(200,152,10,0.1); color:var(--text-cream); }
+.yes { color:#5cd85c; font-weight:bold; }
+.no  { color:#e05050; font-weight:bold; }
+.exp-btn { width:100%; margin-top:14px; background:rgba(245,208,80,0.08); border:1px solid rgba(200,152,10,0.3); color:var(--gold-dim); font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:10px; border-radius:3px; cursor:pointer; }
+
+/* Animations */
+@keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+@keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.reveal { opacity:0; transform:translateY(22px); transition:opacity 0.75s ease,transform 0.75s ease; }
+.reveal.in { opacity:1; transform:translateY(0); }
+
+/* ── TACTILE PRESS ANIMATION ── */
+@keyframes tactilePress {
+  0%   { transform: translateY(-2px) scale(1); }
+  50%  { transform: translateY(-2px) scale(0.99); } /* Gentle 1% press */
+  100% { transform: translateY(-2px) scale(1); }    /* Smoothly returns to hover height */
+}
+
+
+/* ── EVENT ITEM SETUP FOR WIPE ANIMATION ── */
+.event-item {
+  overflow: hidden; /* Keeps the color wipe perfectly inside the rounded corners */
+}
+
+/* Ensure icons and text sit above the moving color wipe */
+.event-icon, .event-info {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── THE WIPE LAYER (Base State) ── */
+.event-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  /* Anchored to the right: 
+     - Opens: Right to Left 
+     - Closes: Left to Right */
+  transform-origin: right; 
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 0;
+}
+
+/* ── PERMANENT COLORS (Prevents the invisible flash) ── */
+/* Haldi is the 3rd event in your HTML */
+.event-item:nth-child(3)::before {
+  background: rgba(40, 110, 180, 0.15); /* Haldi Blue */
+}
+
+/* Reception is the 7th event in your HTML */
+.event-item:nth-child(7)::before {
+  background: var(--off-white-glow); /* Reception Off-White */
+}
+
+/* ── HALDI (ev3) INTERACTION ── */
+.event-item.active-ev3 {
+  border-color: rgba(40, 110, 180, 0.6) !important;
+  box-shadow: 0 8px 30px rgba(40, 110, 180, 0.2) !important;
+}
+
+/* Only trigger the expansion, the color is already there! */
+.event-item.active-ev3::before {
+  transform: scaleX(1); 
+}
+
+/* ── RECEPTION (ev7) INTERACTION ── */
+.event-item.active-ev7 {
+  border-color: var(--off-white) !important;
+  box-shadow: 0 8px 30px var(--off-white-glow) !important;
+}
+
+/* Only trigger the expansion, the color is already there! */
+.event-item.active-ev7::before {
+  transform: scaleX(1);
+}
+
+/* ── THE REVEAL THEME BADGE (COVER) ── */
+.reveal-badge {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--off-white); 
+  border: 1px solid var(--border-muted); 
+  background: rgba(253, 250, 240, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Hide "Reveal Theme" by sliding it to the LEFT when either row is clicked */
+.event-item.active-ev3 .reveal-badge,
+.event-item.active-ev7 .reveal-badge {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-20px, -50%);
+}
+
+/* ── HIDE BADGES BY DEFAULT (WITH SLIDE REVEAL) ── */
+.dc-badge {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(20px, -50%); /* Starts right, slides left */
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 2;
+}
+
+/* =========================================
+   EV3 (HALDI) SPECIFIC STYLES
+========================================= */
+.event-item.active-ev3 {
+  border-color: rgba(40, 110, 180, 0.6) !important;
+  box-shadow: 0 8px 30px rgba(40, 110, 180, 0.2) !important;
+  animation: tactilePress 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.event-item.active-ev3::before {
+  transform: scaleX(1);
+  background: rgba(40, 110, 180, 0.15); /* Haldi Blue Wipe */
+}
+
+/* Slide & fade the Blue Text Badge into place */
+.event-item.active-ev3 .dc-badge {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(0, -50%);
+  background: rgba(40, 110, 180, 0.3) !important;
+  border-color: rgba(40, 110, 180, 0.8) !important;
+  color: #6bb4ff !important;
+}
+
+/* =========================================
+   EV7 (RECEPTION) SPECIFIC STYLES
+========================================= */
+.event-item.active-ev7 {
+  border-color: var(--off-white) !important;
+  box-shadow: 0 8px 30px var(--off-white-glow) !important;
+  animation: tactilePress 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.event-item.active-ev7::before {
+  transform: scaleX(1);
+  background: var(--off-white-glow); /* Off-white Wipe */
+}
+
+/* NAKED EMOJI REVEAL FOR EV7 */
+.emoji-reveal-wrap {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.individual-emoji {
+  font-size: 20px;
+  opacity: 0;
+  transform: translateX(15px);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Sequence Reveal: Dress comes first, then Tuxedo */
+.event-item.active-ev7 .individual-emoji:nth-child(1) {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.15s; 
+}
+
+.event-item.active-ev7 .individual-emoji:nth-child(2) {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.3s; 
+}
+
+.event-item.active-ev7 .individual-emoji:nth-child(3) {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.45s; 
+}
+
+/* ======================================================
+   DYNAMIC THEME TRANSITION FLASHES
+====================================================== */
+
+/* Royal Rajasthani (Deep Amber) */
+body.theme-raj #gold-flash {
+  background: radial-gradient(ellipse at center, #f5c842 0%, #c88e10 60%, transparent 100%);
+}
+
+/* Mughal Garden (Glowing Emerald/Mint) */
+body.theme-mug #gold-flash {
+  background: radial-gradient(ellipse at center, #5cd87a 0%, #3a9a52 60%, transparent 100%);
+}
+
+/* Classic Light (Soft Ivory/White) */
+body.theme-wes #gold-flash {
+  background: radial-gradient(ellipse at center, #ffffff 0%, #fdf8f0 60%, transparent 100%);
+}
+
+/* Moonlit Haveli (Icy Blue/Silver) */
+body.theme-moon #gold-flash {
+  background: radial-gradient(ellipse at center, #c8d8f8 0%, #8898cc 60%, transparent 100%);
+}
+
+/* Rose Velvet (Soft Champagne/Pink) */
+body.theme-rose #gold-flash {
+  background: radial-gradient(ellipse at center, #fce8f0 0%, #c87898 60%, transparent 100%);
+}
+
+/* Saffron Sunrise (Vibrant Orange) */
+body.theme-saff #gold-flash {
+  background: radial-gradient(ellipse at center, #f5a840 0%, #d07820 60%, transparent 100%);
+}
+
+/* Copper Dusk (Deep Bronze/Copper) */
+body.theme-copper #gold-flash {
+  background: radial-gradient(ellipse at center, #d4783a 0%, #a05828 60%, transparent 100%);
+}
+
+/* Midnight Teal (Vibrant Cyan/Teal) */
+body.theme-teal #gold-flash {
+  background: radial-gradient(ellipse at center, #3adbd4 0%, #1aaba6 60%, transparent 100%);
+}
+
+</style>
+</head>
+<body>
+
+  <!-- Sparkles -->
+<div id="sparkleWrap" style="position:fixed;inset:0;pointer-events:none !important;overflow:hidden;z-index:100"></div>
+
+<!-- GOLD FLASH -->
+<div id="gold-flash"></div>
+
+<!-- ================================================
+     INTRO SCREEN
+================================================ -->
+<div id="intro-screen" onclick="enterSite()" ontouchend="event.preventDefault();enterSite()">
+
+  <!-- Mandala -->
+  <div class="mandala-stage" style="z-index:1">
+      <!-- Rays -->
+      <svg class="rays-bg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none">
+        <g transform="translate(400,400)" fill="rgba(245,208,80,1)">
+          <rect x="-1" y="-400" width="2" height="800" opacity="0.5"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(22.5)" opacity="0.4"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(45)" opacity="0.5"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(67.5)" opacity="0.35"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(90)" opacity="0.45"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(112.5)" opacity="0.38"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(135)" opacity="0.5"/>
+          <rect x="-1" y="-400" width="2" height="800" transform="rotate(157.5)" opacity="0.32"/>
+        </g>
+      </svg>
+
+    <svg class="mandala-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ctrGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2d1020"/>
+          <stop offset="100%" stop-color="#0d0208"/>
+        </radialGradient>
+        <radialGradient id="coupleHalo" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#f0c850" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#f0c850" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="gBlur"><feGaussianBlur stdDeviation="2.5"/></filter>
+        <linearGradient id="flameA" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.9"/>
+          <stop offset="25%"  stop-color="#ffe080"/>
+          <stop offset="60%"  stop-color="#ff8010"/>
+          <stop offset="100%" stop-color="#cc3000" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="diyaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#e8a840"/>
+          <stop offset="100%" stop-color="#8a5000"/>
+        </linearGradient>
+      </defs>
+
+      <!--
+        mRingsScale — change scale(0.88) here to resize ALL decorative
+        rings at once WITHOUT touching the CSS animations.
+        Works because it lives in SVG coordinate space, so
+        transform-origin:200px 200px on the spin groups stays valid.
+      -->
+      <g id="mRingsScale" transform="translate(200,200) scale(0.88) translate(-200,-200)">
+
+      <!-- OUTER SPINNING GROUP -->
+      <g class="m-outer-spin">
+        <!-- R6: dot ring -->
+        <g class="m-r6">
+          <circle cx="200" cy="200" r="188" fill="none" stroke="rgba(245,200,70,0.18)" stroke-width="1" stroke-dasharray="3 9"/>
+          <g fill="rgba(245,200,70,0.5)">
+            <circle cx="200" cy="12"  r="2.5"/>
+            <circle cx="333" cy="67"  r="2"/>
+            <circle cx="388" cy="200" r="2.5"/>
+            <circle cx="333" cy="333" r="2"/>
+            <circle cx="200" cy="388" r="2.5"/>
+            <circle cx="67"  cy="333" r="2"/>
+            <circle cx="12"  cy="200" r="2.5"/>
+            <circle cx="67"  cy="67"  r="2"/>
+            <circle cx="270" cy="18"  r="1.8" opacity="0.6"/>
+            <circle cx="382" cy="130" r="1.8" opacity="0.6"/>
+            <circle cx="382" cy="270" r="1.8" opacity="0.6"/>
+            <circle cx="270" cy="382" r="1.8" opacity="0.6"/>
+            <circle cx="130" cy="382" r="1.8" opacity="0.6"/>
+            <circle cx="18"  cy="270" r="1.8" opacity="0.6"/>
+            <circle cx="18"  cy="130" r="1.8" opacity="0.6"/>
+            <circle cx="130" cy="18"  r="1.8" opacity="0.6"/>
+          </g>
+        </g>
+        <!-- R5: 16 outer petal tips -->
+        <g class="m-r5">
+          <g fill="rgba(245,190,50,0.2)" stroke="rgba(245,190,50,0.45)" stroke-width="0.9">
+            <ellipse transform="translate(200,200) rotate(  0)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate( 22.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate( 45)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate( 67.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate( 90)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(112.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(135)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(157.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(180)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(202.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(225)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(247.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(270)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(292.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(315)"  cx="0" cy="-152" rx="9"  ry="20"/>
+            <ellipse transform="translate(200,200) rotate(337.5)" cx="0" cy="-152" rx="9"  ry="20"/>
+          </g>
+          <circle cx="200" cy="200" r="138" fill="none" stroke="rgba(245,190,50,0.22)" stroke-width="1"/>
+          <circle cx="200" cy="200" r="126" fill="none" stroke="rgba(245,190,50,0.14)" stroke-width="0.6"/>
+        </g>
+        <!-- R4: 8 mid diamonds -->
+        <g class="m-r4">
+          <g fill="rgba(245,200,70,0.12)" stroke="rgba(245,200,70,0.4)" stroke-width="1">
+            <rect transform="translate(200,200) rotate(  0) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate( 45) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate( 90) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate(135) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate(180) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate(225) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate(270) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+            <rect transform="translate(200,200) rotate(315) translate(0,-116) rotate(45)" x="-9" y="-9" width="18" height="18"/>
+          </g>
+          <circle cx="200" cy="200" r="108" fill="none" stroke="rgba(245,190,50,0.3)" stroke-width="1.2"/>
+        </g>
+      </g>
+
+      <!-- INNER COUNTER-SPIN -->
+      <g class="m-inner-spin">
+        <g class="m-r3">
+          <g fill="rgba(245,180,40,0.18)" stroke="rgba(245,180,40,0.55)" stroke-width="1">
+            <ellipse transform="translate(200,200) rotate(  0)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate( 45)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate( 90)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate(135)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate(180)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate(225)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate(270)" cx="0" cy="-82" rx="12" ry="14"/>
+            <ellipse transform="translate(200,200) rotate(315)" cx="0" cy="-82" rx="12" ry="14"/>
+          </g>
+        </g>
+        <g class="m-r2">
+          <g fill="rgba(255,220,80,0.28)" stroke="rgba(255,220,80,0.5)" stroke-width="0.9">
+            <ellipse transform="translate(200,200) rotate( 22.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate( 67.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate(112.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate(157.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate(202.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate(247.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate(292.5)" cx="0" cy="-78" rx="9" ry="20"/>
+            <ellipse transform="translate(200,200) rotate(337.5)" cx="0" cy="-78" rx="9" ry="20"/>
+          </g>
+          <circle cx="200" cy="200" r="58" fill="none" stroke="rgba(245,190,50,0.45)" stroke-width="1.5"/>
+        </g>
+      </g><!-- end m-inner-spin -->
+
+      </g><!-- end mRingsScale -->
+
+      
+      <!-- FIXED INNER -->
+      <g class="m-r1">
+        <circle cx="200" cy="200" r="56" fill="url(#ctrGrad)" stroke="rgba(245,190,50,0.6)" stroke-width="1.5"/>
+        <circle cx="200" cy="200" r="51" fill="none" stroke="rgba(245,190,50,0.2)" stroke-width="0.8"/>
+        <g fill="rgba(245,208,80,0.8)">
+          <circle transform="translate(200,200) rotate(  0) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate( 45) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate( 90) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate(135) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate(180) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate(225) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate(270) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+          <circle transform="translate(200,200) rotate(315) translate(0,-56)" cx="0" cy="0" r="2.5"/>
+        </g>
+      </g>
+
+      <!-- Center mask: sits after couple characters so couple appears on top -->
+      <circle cx="200" cy="200" r="56" fill="#0d0208" class="m-center"/>
+
+
+      <!-- COUPLE CENTER -->
+      <g class="m-center">
+        <circle cx="200" cy="200" r="52" fill="url(#coupleHalo)"/>
+        <!-- Couple figures shifted up to center properly inside the ring -->
+        <g transform="translate(0,-22)">
+        <!-- BRIDE -->
+        <path d="M172,237 Q162,245 159,256 Q157,262 165,261 Q175,259 180,253 Q184,249 183,237 Z" fill="rgba(200,60,60,0.9)"/>
+        <path d="M159,258 Q169,263 178,259" fill="none" stroke="rgba(245,200,60,0.8)" stroke-width="1.5"/>
+        <rect x="168" y="218" width="16" height="20" rx="4" fill="rgba(170,50,50,0.95)"/>
+        <path d="M172,200 Q185,196 188,210 Q184,228 178,237" fill="rgba(255,250,240,0.45)" stroke="rgba(245,210,150,0.3)" stroke-width="0.5"/>
+        <path d="M184,222 Q192,212 196,222" fill="none" stroke="rgba(245,200,60,0.7)" stroke-width="3" stroke-linecap="round"/>
+        <rect x="173" y="210" width="8" height="12" rx="3" fill="rgba(200,155,100,0.95)"/>
+        <circle cx="177" cy="204" r="14" fill="rgba(200,155,100,0.95)"/>
+        <path d="M164,198 Q166,190 177,188 Q188,190 190,198" fill="rgba(20,5,0,0.9)"/>
+        <ellipse cx="186" cy="191" rx="6" ry="4" fill="rgba(20,5,0,0.9)"/>
+        <circle cx="177" cy="199" r="2" fill="rgba(245,200,60,0.9)"/>
+        <line x1="177" y1="188" x2="177" y2="196" stroke="rgba(245,200,60,0.8)" stroke-width="0.8"/>
+        <circle cx="177" cy="196" r="2.5" fill="rgba(200,140,30,0.9)"/>
+        <ellipse cx="173" cy="203" rx="2" ry="1.5" fill="rgba(20,5,0,0.9)"/>
+        <ellipse cx="181" cy="203" rx="2" ry="1.5" fill="rgba(20,5,0,0.9)"/>
+        <path d="M173,209 Q177,212 181,209" fill="none" stroke="rgba(140,50,30,0.8)" stroke-width="1" stroke-linecap="round"/>
+        <rect x="164" y="222" width="6" height="2" rx="1" fill="rgba(245,200,60,0.8)"/>
+        <rect x="164" y="225" width="6" height="2" rx="1" fill="rgba(200,80,60,0.8)"/>
+        <!-- GROOM -->
+        <rect x="208" y="218" width="28" height="44" rx="4" fill="rgba(26,40,90,0.95)"/>
+        <rect x="220" y="220" width="4" height="38" rx="1" fill="rgba(245,200,60,0.5)"/>
+        <circle cx="222" cy="224" r="1.5" fill="rgba(245,200,60,0.9)"/>
+        <circle cx="222" cy="230" r="1.5" fill="rgba(245,200,60,0.9)"/>
+        <circle cx="222" cy="236" r="1.5" fill="rgba(245,200,60,0.9)"/>
+        <path d="M208,222 Q222,218 236,222" fill="none" stroke="rgba(245,200,60,0.7)" stroke-width="0.8"/>
+        <rect x="210" y="257" width="10" height="6" rx="3" fill="rgba(40,60,120,0.9)"/>
+        <rect x="222" y="257" width="10" height="6" rx="3" fill="rgba(40,60,120,0.9)"/>
+        <ellipse cx="215" cy="262" rx="7" ry="3" fill="rgba(20,20,50,0.9)"/>
+        <ellipse cx="227" cy="262" rx="7" ry="3" fill="rgba(20,20,50,0.9)"/>
+        <rect x="218" y="208" width="8" height="12" rx="3" fill="rgba(200,155,100,0.95)"/>
+        <circle cx="222" cy="203" r="14" fill="rgba(200,155,100,0.95)"/>
+        <path d="M209,196 Q222,182 235,196" fill="rgba(26,40,90,0.85)"/>
+        <path d="M220,182 Q222,178 226,182" fill="none" stroke="rgba(245,200,60,0.8)" stroke-width="1.5"/>
+        <ellipse cx="218" cy="203" rx="2" ry="1.5" fill="rgba(20,5,0,0.9)"/>
+        <ellipse cx="226" cy="203" rx="2" ry="1.5" fill="rgba(20,5,0,0.9)"/>
+        <path d="M218,209 Q222,213 226,209" fill="none" stroke="rgba(140,80,40,0.8)" stroke-width="1" stroke-linecap="round"/>
+        <path d="M208,232 Q202,236 199,241" stroke="rgba(200,155,100,0.8)" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M184,236 Q190,238 199,241" stroke="rgba(200,155,100,0.8)" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="199" cy="241" r="5" fill="rgba(200,155,100,0.65)"/>
+        <text x="199" y="247" text-anchor="middle" font-size="7" fill="rgba(245,200,60,0.9)">✦</text>
+        </g><!-- end couple translate -->
+        <!-- portrait ring -->
+        <circle cx="200" cy="200" r="54" fill="none" stroke="rgba(245,190,50,0.5)" stroke-width="1.5" filter="url(#gBlur)"/>
+        <circle cx="200" cy="200" r="54" fill="none" stroke="rgba(245,190,50,0.7)" stroke-width="0.7"/>
+      </g>
+
+     
+      <!-- === DIYAS around the mandala — drawn in SVG, animated via JS === -->
+<g id="diyaSVG" opacity="0">
+  <!-- D1 top -->
+  <g id="d0" transform="translate(200,8)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df0" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D2 top-right -->
+  <g id="d1" transform="translate(334,66)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df1" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D3 right -->
+  <g id="d2" transform="translate(392,200)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df2" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D4 bottom-right -->
+  <g id="d3" transform="translate(334,334)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df3" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D5 bottom -->
+  <g id="d4" transform="translate(200,392)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df4" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D6 bottom-left -->
+  <g id="d5" transform="translate(66,334)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df5" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D7 left -->
+  <g id="d6" transform="translate(8,200)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df6" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+  <!-- D8 top-left -->
+  <g id="d7" transform="translate(66,66)" style="opacity:0">
+    <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#diyaGrad)"/>
+    <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.7)"/>
+    <g id="df7" class="mini-flame-g" style="transform-origin:0px 0px">
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <path d="M0,0 C-5,-8 -3,-18 0,-22 C3,-18 5,-8 0,0 Z" fill="url(#flameA)"/>
+      <path d="M0,0 C-2,-5 -1,-11 0,-13 C1,-11 2,-5 0,0 Z" fill="rgba(255,255,220,0.9)"/>
+    </g>
+  </g>
+</g>
+
+</svg>
+</div>
+
+  <!-- Text -->
+  <div class="intro-text-wrap" style="z-index:1">
+    <div class="intro-tagline" id="introTagline"><span class="tl-0" style="">You are cordially invited</span></div>
+    <div class="intro-names" id="introNames">Priya <span class="i-amp">&</span> Arjun</div>
+    <div class="intro-date" id="introDate">15 February 2026 · The Auric Resort, Kota</div>
+  </div>
+  <div class="intro-tap">✦ Tap anywhere to open ✦</div>
+
+</div>
+
+
+<!-- ================================================
+     MAIN APP
+================================================ -->
+<div id="app">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-light"></div>
+    <div id="petalsWrap" style="position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden"></div>
+
+    <div class="palace-wrap">
+      <!-- The Auric Resort, Kota — modern luxury resort silhouette -->
+      <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+        <defs>
+          <linearGradient id="palFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(245,200,80,0)"/>
+            <stop offset="55%" stop-color="rgba(245,200,80,0.07)"/>
+            <stop offset="100%" stop-color="rgba(245,200,80,0.28)"/>
+          </linearGradient>
+          <linearGradient id="gndG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(160,130,60,0.5)"/>
+            <stop offset="100%" stop-color="rgba(100,75,25,0.85)"/>
+          </linearGradient>
+          <linearGradient id="poolG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(80,160,200,0.18)"/>
+            <stop offset="100%" stop-color="rgba(40,100,160,0.06)"/>
+          </linearGradient>
+        </defs>
+        <!-- Ground / lawn -->
+        <rect x="0" y="370" width="500" height="50" fill="url(#gndG)"/>
+        <!-- Reflection pool -->
+        <ellipse cx="250" cy="375" rx="140" ry="12" fill="url(#poolG)" stroke="rgba(245,200,80,0.15)" stroke-width="0.7"/>
+        <line x1="115" y1="370" x2="385" y2="370" stroke="rgba(245,200,80,0.12)" stroke-width="0.8"/>
+        <!-- Pool ripple lines -->
+        <ellipse cx="250" cy="375" rx="80" ry="5" fill="none" stroke="rgba(245,200,80,0.08)" stroke-width="0.6"/>
+        <ellipse cx="250" cy="375" rx="120" ry="9" fill="none" stroke="rgba(245,200,80,0.06)" stroke-width="0.5"/>
+
+        <!-- LEFT WING — 2-storey wing -->
+        <rect x="30" y="210" width="130" height="160" fill="rgba(245,200,80,0.05)" stroke="rgba(245,200,80,0.18)" stroke-width="0.8"/>
+        <!-- Left wing floor divider -->
+        <line x1="30" y1="290" x2="160" y2="290" stroke="rgba(245,200,80,0.14)" stroke-width="0.6"/>
+        <!-- Left wing windows — upper row -->
+        <g fill="rgba(245,200,80,0.10)" stroke="rgba(245,200,80,0.28)" stroke-width="0.7">
+          <rect x="45" y="222" width="22" height="34" rx="2"/>
+          <rect x="78" y="222" width="22" height="34" rx="2"/>
+          <rect x="111" y="222" width="22" height="34" rx="2"/>
+        </g>
+        <!-- Left wing windows — lower row -->
+        <g fill="rgba(245,200,80,0.08)" stroke="rgba(245,200,80,0.22)" stroke-width="0.7">
+          <rect x="45" y="300" width="22" height="34" rx="2"/>
+          <rect x="78" y="300" width="22" height="34" rx="2"/>
+          <rect x="111" y="300" width="22" height="34" rx="2"/>
+        </g>
+        <!-- Left roofline parapet -->
+        <rect x="30" y="200" width="130" height="14" fill="rgba(245,200,80,0.12)" stroke="rgba(245,200,80,0.25)" stroke-width="0.7"/>
+        <!-- Parapet teeth -->
+        <g fill="rgba(245,200,80,0.2)">
+          <rect x="35" y="193" width="10" height="9" rx="1"/><rect x="52" y="193" width="10" height="9" rx="1"/>
+          <rect x="69" y="193" width="10" height="9" rx="1"/><rect x="86" y="193" width="10" height="9" rx="1"/>
+          <rect x="103" y="193" width="10" height="9" rx="1"/><rect x="120" y="193" width="10" height="9" rx="1"/>
+          <rect x="137" y="193" width="10" height="9" rx="1"/>
+        </g>
+
+        <!-- RIGHT WING — 2-storey wing -->
+        <rect x="340" y="210" width="130" height="160" fill="rgba(245,200,80,0.05)" stroke="rgba(245,200,80,0.18)" stroke-width="0.8"/>
+        <line x1="340" y1="290" x2="470" y2="290" stroke="rgba(245,200,80,0.14)" stroke-width="0.6"/>
+        <g fill="rgba(245,200,80,0.10)" stroke="rgba(245,200,80,0.28)" stroke-width="0.7">
+          <rect x="355" y="222" width="22" height="34" rx="2"/>
+          <rect x="388" y="222" width="22" height="34" rx="2"/>
+          <rect x="421" y="222" width="22" height="34" rx="2"/>
+        </g>
+        <g fill="rgba(245,200,80,0.08)" stroke="rgba(245,200,80,0.22)" stroke-width="0.7">
+          <rect x="355" y="300" width="22" height="34" rx="2"/>
+          <rect x="388" y="300" width="22" height="34" rx="2"/>
+          <rect x="421" y="300" width="22" height="34" rx="2"/>
+        </g>
+        <rect x="340" y="200" width="130" height="14" fill="rgba(245,200,80,0.12)" stroke="rgba(245,200,80,0.25)" stroke-width="0.7"/>
+        <g fill="rgba(245,200,80,0.2)">
+          <rect x="345" y="193" width="10" height="9" rx="1"/><rect x="362" y="193" width="10" height="9" rx="1"/>
+          <rect x="379" y="193" width="10" height="9" rx="1"/><rect x="396" y="193" width="10" height="9" rx="1"/>
+          <rect x="413" y="193" width="10" height="9" rx="1"/><rect x="430" y="193" width="10" height="9" rx="1"/>
+          <rect x="447" y="193" width="10" height="9" rx="1"/>
+        </g>
+
+        <!-- CENTRAL BLOCK — taller, grander -->
+        <rect x="155" y="155" width="190" height="215" fill="rgba(245,200,80,0.07)" stroke="rgba(245,200,80,0.22)" stroke-width="1"/>
+        <!-- Central floor dividers -->
+        <line x1="155" y1="235" x2="345" y2="235" stroke="rgba(245,200,80,0.13)" stroke-width="0.6"/>
+        <line x1="155" y1="310" x2="345" y2="310" stroke="rgba(245,200,80,0.13)" stroke-width="0.6"/>
+        <!-- Central windows — top floor -->
+        <g fill="rgba(245,200,80,0.12)" stroke="rgba(245,200,80,0.32)" stroke-width="0.8">
+          <rect x="170" y="165" width="28" height="42" rx="2"/>
+          <rect x="210" y="165" width="28" height="42" rx="2"/>
+          <rect x="250" y="165" width="28" height="42" rx="2"/>
+          <rect x="290" y="165" width="28" height="42" rx="2"/>
+        </g>
+        <!-- Central windows — mid floor -->
+        <g fill="rgba(245,200,80,0.09)" stroke="rgba(245,200,80,0.26)" stroke-width="0.8">
+          <rect x="170" y="245" width="28" height="42" rx="2"/>
+          <rect x="214" y="245" width="28" height="42" rx="2"/>
+          <rect x="258" y="245" width="28" height="42" rx="2"/>
+          <rect x="302" y="245" width="28" height="42" rx="2"/>
+        </g>
+        <!-- Main entrance arch + door -->
+        <path d="M218,370 L218,328 Q218,308 250,308 Q282,308 282,328 L282,370 Z" fill="rgba(0,0,0,0.45)" stroke="rgba(245,200,80,0.28)" stroke-width="1"/>
+        <!-- Door surround columns -->
+        <rect x="214" y="310" width="8" height="60" fill="rgba(245,200,80,0.12)"/>
+        <rect x="278" y="310" width="8" height="60" fill="rgba(245,200,80,0.12)"/>
+        <!-- Ornamental keystone above arch -->
+        <polygon points="250,300 238,314 262,314" fill="rgba(245,200,80,0.22)"/>
+        <!-- Central parapet / roofline -->
+        <rect x="155" y="140" width="190" height="18" fill="rgba(245,200,80,0.14)" stroke="rgba(245,200,80,0.28)" stroke-width="0.8"/>
+        <!-- Parapet teeth — centre -->
+        <g fill="rgba(245,200,80,0.25)">
+          <rect x="160" y="130" width="10" height="12" rx="1"/><rect x="178" y="130" width="10" height="12" rx="1"/>
+          <rect x="196" y="130" width="10" height="12" rx="1"/><rect x="214" y="130" width="10" height="12" rx="1"/>
+          <rect x="232" y="130" width="10" height="12" rx="1"/><rect x="250" y="130" width="10" height="12" rx="1"/>
+          <rect x="268" y="130" width="10" height="12" rx="1"/><rect x="286" y="130" width="10" height="12" rx="1"/>
+          <rect x="304" y="130" width="10" height="12" rx="1"/><rect x="322" y="130" width="10" height="12" rx="1"/>
+        </g>
+        <!-- Central tower / raised centre -->
+        <rect x="210" y="90" width="80" height="52" fill="rgba(245,200,80,0.08)" stroke="rgba(245,200,80,0.3)" stroke-width="1"/>
+        <rect x="210" y="82" width="80" height="12" fill="rgba(245,200,80,0.16)" stroke="rgba(245,200,80,0.3)" stroke-width="0.8"/>
+        <!-- Tower windows -->
+        <rect x="225" y="100" width="18" height="28" rx="2" fill="rgba(245,200,80,0.14)" stroke="rgba(245,200,80,0.35)" stroke-width="0.8"/>
+        <rect x="257" y="100" width="18" height="28" rx="2" fill="rgba(245,200,80,0.14)" stroke="rgba(245,200,80,0.35)" stroke-width="0.8"/>
+        <!-- Flagpole + flag -->
+        <line x1="250" y1="82" x2="250" y2="55" stroke="rgba(245,200,80,0.5)" stroke-width="1.5"/>
+        <polygon points="250,55 270,63 250,71" fill="rgba(245,200,80,0.5)"/>
+        <!-- Corner decorative pillars -->
+        <rect x="30" y="200" width="10" height="170" fill="rgba(245,200,80,0.1)" stroke="rgba(245,200,80,0.2)" stroke-width="0.5"/>
+        <rect x="460" y="200" width="10" height="170" fill="rgba(245,200,80,0.1)" stroke="rgba(245,200,80,0.2)" stroke-width="0.5"/>
+        <!-- Palm trees flanking -->
+        <line x1="14" y1="360" x2="14" y2="290" stroke="rgba(245,200,80,0.2)" stroke-width="2.5"/>
+        <ellipse cx="14" cy="288" rx="14" ry="8" fill="rgba(80,160,60,0.15)" stroke="rgba(245,200,80,0.15)" stroke-width="0.6"/>
+        <line x1="486" y1="360" x2="486" y2="290" stroke="rgba(245,200,80,0.2)" stroke-width="2.5"/>
+        <ellipse cx="486" cy="288" rx="14" ry="8" fill="rgba(80,160,60,0.15)" stroke="rgba(245,200,80,0.15)" stroke-width="0.6"/>
+        <!-- Fade overlay -->
+        <rect x="0" y="140" width="500" height="230" fill="url(#palFade)"/>
+      </svg>
+    </div>
+
+    <!-- Couple SVG (now in flow, below names) -->
+
+    <div class="hero-text">
+      <span class="hero-tagline">Together with their families</span>
+      <div class="hero-names-big">
+        <span id="h1">Priya</span>
+        <span class="amp-line">— weds —</span>
+        <span id="h2">Arjun</span>
+      </div>
+      <div class="hero-date-tag" id="hDate">15 February 2026</div>
+    </div>
+
+    <div class="couple-wrap">
+      <svg width="130" height="200" viewBox="0 0 130 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M38,28 Q50,20 62,28 Q70,50 65,90 Q55,100 45,95 Q35,85 38,28 Z" fill="rgba(255,252,245,0.7)"/>
+        <path d="M28,95 Q22,130 18,170 Q16,185 30,190 Q45,195 55,188 Q65,182 62,170 Q58,130 52,95 Z" fill="#c0392b"/>
+        <path d="M19,172 Q22,185 32,189 Q46,194 56,187 Q62,182 62,172" fill="none" stroke="#e8c875" stroke-width="2"/>
+        <rect x="32" y="68" width="26" height="30" rx="5" fill="#b02020"/>
+        <path d="M58,72 Q75,55 80,80 Q77,110 68,125" stroke="rgba(232,200,117,0.8)" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <rect x="40" y="54" width="10" height="18" rx="4" fill="#c09060"/>
+        <path d="M36,74 Q45,80 54,74" fill="none" stroke="#e8c875" stroke-width="1.5"/>
+        <circle cx="45" cy="36" r="20" fill="#c09060"/>
+        <path d="M27,28 Q30,12 45,10 Q60,12 63,28" fill="#1a0a00"/>
+        <ellipse cx="55" cy="14" rx="8" ry="6" fill="#1a0a00"/>
+        <path d="M45,10 L45,22" stroke="#e8c875" stroke-width="1"/>
+        <circle cx="45" cy="23" r="3.5" fill="#c9922a"/>
+        <circle cx="45" cy="28" r="2.5" fill="#e8c875"/>
+        <ellipse cx="40" cy="34" rx="2.5" ry="2" fill="#1a0800"/>
+        <ellipse cx="50" cy="34" rx="2.5" ry="2" fill="#1a0800"/>
+        <path d="M40,41 Q45,45 50,41" fill="none" stroke="#8a3020" stroke-width="1.2" stroke-linecap="round"/>
+        <rect x="24" y="74" width="8" height="24" rx="4" fill="#c09060"/>
+        <rect x="24" y="75" width="8" height="2.5" rx="1" fill="#e8c875"/>
+        <rect x="24" y="79" width="8" height="2.5" rx="1" fill="#c0392b"/>
+        <rect x="24" y="83" width="8" height="2.5" rx="1" fill="#e8c875"/>
+        <rect x="24" y="87" width="8" height="2.5" rx="1" fill="#c9922a"/>
+        <path d="M58,84 Q70,90 78,93" stroke="#c09060" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <ellipse cx="35" cy="192" rx="7" ry="4" fill="#c0392b"/>
+        <ellipse cx="48" cy="194" rx="7" ry="4" fill="#8b1a1a"/>
+        <path d="M29,190 Q36,193 42,190" fill="none" stroke="#e8c875" stroke-width="1.2"/>
+        <rect x="78" y="68" width="40" height="110" rx="5" fill="#1a2a5a"/>
+        <rect x="96" y="70" width="5" height="90" rx="2" fill="rgba(232,200,117,0.55)"/>
+        <circle cx="98" cy="78" r="2" fill="#e8c875"/><circle cx="98" cy="88" r="2" fill="#e8c875"/>
+        <circle cx="98" cy="98" r="2" fill="#e8c875"/><circle cx="98" cy="108" r="2" fill="#e8c875"/>
+        <path d="M78,72 Q98,66 118,72" fill="none" stroke="#e8c875" stroke-width="1"/>
+        <rect x="82" y="172" width="14" height="24" rx="4" fill="#2a3d6b"/>
+        <rect x="100" y="172" width="14" height="24" rx="4" fill="#2a3d6b"/>
+        <ellipse cx="89" cy="195" rx="9" ry="5" fill="#1a1a3a"/>
+        <ellipse cx="107" cy="195" rx="9" ry="5" fill="#1a1a3a"/>
+        <path d="M78,90 Q70,98 68,110" stroke="#c09060" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <rect x="106" y="54" width="10" height="18" rx="4" fill="#c09060"/>
+        <circle cx="98" cy="42" r="18" fill="#c09060"/>
+        <path d="M82,34 Q85,18 98,16 Q111,18 114,34" fill="#2a1a08"/>
+        <rect x="84" y="26" width="28" height="10" rx="3" fill="#1a2a5a"/>
+        <path d="M84,26 Q98,22 112,26" fill="none" stroke="#e8c875" stroke-width="1"/>
+        <path d="M90,26 L86,22 L96,22 Z" fill="rgba(200,160,50,0.8)"/>
+        <ellipse cx="93" cy="40" rx="2.5" ry="2" fill="#1a0800"/>
+        <ellipse cx="103" cy="40" rx="2.5" ry="2" fill="#1a0800"/>
+        <path d="M93,48 Q98,52 103,48" fill="none" stroke="#8a4020" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="scroll-down">↓ Scroll Down</div>
+  </section>
+    
+
+      <!-- RSVP -->
+  <div class="page reveal">
+    <svg class="page-mandala-bg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="rgba(245,200,70,1)" stroke-width="0.8">
+        <circle cx="200" cy="200" r="195"/><circle cx="200" cy="200" r="150"/><circle cx="200" cy="200" r="95"/>
+        <g>
+          <ellipse transform="translate(200,200) rotate(  0)" cx="0" cy="-125" rx="10" ry="28"/>
+          <ellipse transform="translate(200,200) rotate( 60)" cx="0" cy="-125" rx="10" ry="28"/>
+          <ellipse transform="translate(200,200) rotate(120)" cx="0" cy="-125" rx="10" ry="28"/>
+          <ellipse transform="translate(200,200) rotate(180)" cx="0" cy="-125" rx="10" ry="28"/>
+          <ellipse transform="translate(200,200) rotate(240)" cx="0" cy="-125" rx="10" ry="28"/>
+          <ellipse transform="translate(200,200) rotate(300)" cx="0" cy="-125" rx="10" ry="28"/>
+        </g>
+      </g>
+    </svg>
+    <div class="sec-label" id="secLblRsvp">Kindly Reply</div>
+    <div class="sec-title" id="secTitRsvp">RSVP</div>
+    <div class="gold-rule"></div>
+    <div class="diya-row" id="rsvpDiyaRow" style="margin-bottom:24px"></div>
+    <div class="rsvp-box">
+      <div id="rsvpForm">
+        <div class="field"><label>Your Full Name</label><input type="text" id="rName" placeholder="Enter your name"></div>
+        <div class="field">
+          <label>Number of Guests</label>
+          <div style="display:flex;align-items:center;justify-content:center;gap:16px;">
+            <button type="button" onclick="changeGuests(-1)" style="width:40px;height:40px;font-size:24px;background:rgba(245,200,70,0.1);border:1px solid rgba(200,152,10,0.3);color:var(--gold-bright);cursor:pointer;border-radius:4px;transition:all 0.3s;">−</button>
+            <input type="number" id="rGuests" value="1" min="1" max="20" readonly style="width:80px;text-align:center;font-size:24px;font-weight:bold;background:rgba(245,208,80,0.05);border:1px solid rgba(200,152,10,0.3);color:var(--gold-bright);padding:8px;border-radius:4px;">
+            <button type="button" onclick="changeGuests(1)" style="width:40px;height:40px;font-size:24px;background:rgba(245,200,70,0.1);border:1px solid rgba(200,152,10,0.3);color:var(--gold-bright);cursor:pointer;border-radius:4px;transition:all 0.3s;">+</button>
+          </div>
+        </div>
+        <input type="hidden" id="rAttend" value="yes">
+           <div class="field"><label>When are you arriving?</label><input type="datetime-local" id="rArrival" style="width:100%;background:rgba(245,208,80,0.06);border:1px solid rgba(200,152,10,0.3);color:var(--text-cream);font-family:'Cormorant Garamond',serif;font-size:15px;padding:10px 12px;border-radius:4px;outline:none;color-scheme:dark;"></div>
+        <div id="rsvpErr" style="display:none;color:#e05050;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-align:center;margin-bottom:12px;">Please fill in all fields ✦</div>
+        <button class="rsvp-btn" id="rsvpBtn" onclick="submitRSVP()">Send RSVP ✦</button>
+      </div>
+      <div class="rsvp-success" id="rsvpSuccess"></div>
+    </div>
+  </div>
+
+
+  <!-- EVENTS -->
+  <div class="page reveal">
+    <!-- faint mandala watermark -->
+    <svg class="page-mandala-bg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="rgba(245,200,70,1)" stroke-width="0.8">
+        <circle cx="200" cy="200" r="195"/><circle cx="200" cy="200" r="165"/><circle cx="200" cy="200" r="120"/><circle cx="200" cy="200" r="80"/><circle cx="200" cy="200" r="50"/>
+        <g>
+          <ellipse transform="translate(200,200) rotate(  0)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate( 45)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate( 90)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate(135)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate(180)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate(225)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate(270)" cx="0" cy="-140" rx="12" ry="35"/>
+          <ellipse transform="translate(200,200) rotate(315)" cx="0" cy="-140" rx="12" ry="35"/>
+        </g>
+      </g>
+    </svg>
+    <div class="sec-label" id="secLblEvents">Celebration Programme</div>
+    <div class="sec-title" id="secTitEvents">The Festivities</div>
+    <div class="gold-rule"></div>
+    <div class="diya-row" id="evDiyaRow" style="margin-bottom:24px"></div>
+    <div class="events">
+      <div class="event-item"><div class="event-icon">🙏</div><div class="event-info"><div class="event-name">Ganesh Poojan</div><div class="event-detail" id="ev1">18th June, 2026 · 7:30 AM<br>Venue, Jaipur</div></div></div>
+      <div class="event-item"><div class="event-icon">🏺</div><div class="event-info"><div class="event-name">Dholi Kalash</div><div class="event-detail" id="ev2">18th June, 2026 · 9:30 AM<br>Venue, Jaipur</div></div></div>
+      <div class="event-item"><div class="event-icon">🥣</div><div class="event-info"><div class="event-name">Haldi Ceremony</div><div class="event-detail" id="ev3">18th June, 2026 · 11:00 AM<br>Venue, Jaipur</div></div></div>
+      <div class="event-item"><div class="event-icon">💍</div><div class="event-info"><div class="event-name">Engagement & Sangeet</div><div class="event-detail" id="ev4">18th June, 2026 · 6:00 PM<br>Venue, Jaipur</div></div></div>
+      <div class="event-item"><div class="event-icon">🎺</div><div class="event-info"><div class="event-name">Barat Swagat</div><div class="event-detail" id="ev5">19th June, 2026 · 12:00 PM<br>The Auric Resort, Kota</div></div></div>
+      <div class="event-item"><div class="event-icon">🔥</div><div class="event-info"><div class="event-name">Panigrahan Sanskar (Phere)</div><div class="event-detail" id="ev6">19th June, 2026 · 2:00 PM<br>The Auric Resort, Kota</div></div></div>
+      <div class="event-item"><div class="event-icon">🎩</div><div class="event-info"><div class="event-name">Reception</div><div class="event-detail" id="ev7">19th June, 2026 · 7:00 PM<br>The Auric Resort, Kota</div></div></div>
+    </div>
+  </div>
+
+  <!-- VENUE -->
+  <div class="page reveal" style="background:radial-gradient(ellipse at 50% 50%, #1e0818 0%, #0d0208 100%)">
+    <svg class="page-mandala-bg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="rgba(245,200,70,1)" stroke-width="0.8">
+        <circle cx="200" cy="200" r="195"/><circle cx="200" cy="200" r="155"/><circle cx="200" cy="200" r="110"/>
+        <g>
+          <rect transform="translate(200,200) rotate(  0) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate( 45) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate( 90) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate(135) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate(180) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate(225) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate(270) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+          <rect transform="translate(200,200) rotate(315) translate(0,-130) rotate(45)" x="-12" y="-12" width="24" height="24"/>
+        </g>
+      </g>
+    </svg>
+    <div class="sec-label" id="secLblVenue">Wedding Venue</div>
+    <div class="sec-title" id="secTitVenue">The Venue</div>
+    <div class="gold-rule"></div>
+    <div class="venue-box">
+      <div class="venue-sketch">
+        <!-- The Auric Resort, Kota — architectural line sketch -->
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:330px;display:block">
+          <defs>
+            <radialGradient id="wGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(255,210,130,0.45)"/>
+              <stop offset="100%" stop-color="rgba(255,180,60,0.05)"/>
+            </radialGradient>
+            <linearGradient id="vFade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(245,200,80,0.13)"/>
+              <stop offset="100%" stop-color="rgba(245,200,80,0.03)"/>
+            </linearGradient>
+          </defs>
+
+          <!-- ambient glow -->
+          <ellipse cx="200" cy="115" rx="180" ry="90" fill="rgba(245,200,80,0.025)"/>
+
+          <!-- ── MAIN BLOCK (3 storeys) ── -->
+          <rect x="100" y="28" width="200" height="145" fill="url(#vFade)" stroke="rgba(200,152,10,0.5)" stroke-width="1"/>
+
+          <!-- LED edge strip – left -->
+          <rect x="99"  y="27" width="2.5" height="147" fill="rgba(255,255,200,0.75)" rx="1"/>
+          <rect x="96"  y="25" width="7"   height="151" fill="rgba(255,255,200,0.1)"  rx="2"/>
+          <!-- LED edge strip – right -->
+          <rect x="298.5" y="27" width="2.5" height="147" fill="rgba(255,255,200,0.75)" rx="1"/>
+          <rect x="297"   y="25" width="7"   height="151" fill="rgba(255,255,200,0.1)"  rx="2"/>
+          <!-- LED top strip -->
+          <rect x="99" y="27" width="202" height="2.5" fill="rgba(255,255,200,0.7)" rx="1"/>
+          <rect x="97" y="25" width="206" height="6"   fill="rgba(255,255,200,0.1)" rx="2"/>
+
+          <!-- floor dividers -->
+          <line x1="100" y1="76"  x2="300" y2="76"  stroke="rgba(200,152,10,0.2)" stroke-width="0.5"/>
+          <line x1="100" y1="124" x2="300" y2="124" stroke="rgba(200,152,10,0.2)" stroke-width="0.5"/>
+
+          <!-- ── FLOOR 3 WINDOWS ── -->
+          <rect x="112" y="36" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.45)" stroke-width="0.7" rx="1"/>
+          <rect x="149" y="36" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.45)" stroke-width="0.7" rx="1"/>
+          <rect x="186" y="36" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.5)"  stroke-width="0.7" rx="1"/>
+          <rect x="223" y="36" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.45)" stroke-width="0.7" rx="1"/>
+          <rect x="260" y="36" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.45)" stroke-width="0.7" rx="1"/>
+
+          <!-- ── FLOOR 2 WINDOWS ── -->
+          <rect x="112" y="84" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.4)" stroke-width="0.7" rx="1"/>
+          <rect x="149" y="84" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.4)" stroke-width="0.7" rx="1"/>
+          <!-- frosted centre panels -->
+          <rect x="186" y="84" width="28" height="32" fill="rgba(200,220,240,0.1)" stroke="rgba(180,210,240,0.3)" stroke-width="0.7" rx="1"/>
+          <rect x="223" y="84" width="28" height="32" fill="rgba(200,220,240,0.1)" stroke="rgba(180,210,240,0.3)" stroke-width="0.7" rx="1"/>
+          <rect x="260" y="84" width="28" height="32" fill="url(#wGlow)" stroke="rgba(200,152,10,0.4)" stroke-width="0.7" rx="1"/>
+
+          <!-- ── GROUND FLOOR (lobby left + right, central entrance) ── -->
+          <rect x="112" y="132" width="50" height="34" fill="url(#wGlow)" stroke="rgba(200,152,10,0.35)" stroke-width="0.7" rx="1"/>
+          <!-- lobby desk hint -->
+          <line x1="120" y1="158" x2="158" y2="158" stroke="rgba(200,152,10,0.3)" stroke-width="0.8"/>
+          <rect x="122" y="152" width="12" height="5" rx="1" fill="rgba(200,152,10,0.12)" stroke="rgba(200,152,10,0.2)" stroke-width="0.4"/>
+
+          <rect x="238" y="132" width="50" height="34" fill="url(#wGlow)" stroke="rgba(200,152,10,0.35)" stroke-width="0.7" rx="1"/>
+          <!-- sofa hint -->
+          <rect x="248" y="152" width="28" height="7" rx="2" fill="rgba(160,110,40,0.2)" stroke="rgba(200,152,10,0.2)" stroke-width="0.4"/>
+
+          <!-- central columns -->
+          <rect x="172" y="128" width="7" height="45" fill="rgba(200,152,10,0.15)" stroke="rgba(200,152,10,0.35)" stroke-width="0.5"/>
+          <rect x="221" y="128" width="7" height="45" fill="rgba(200,152,10,0.15)" stroke="rgba(200,152,10,0.35)" stroke-width="0.5"/>
+
+          <!-- entrance double doors -->
+          <rect x="179" y="146" width="42" height="27" fill="rgba(60,20,5,0.85)" stroke="rgba(200,152,10,0.5)" stroke-width="0.8" rx="1"/>
+          <rect x="181" y="148" width="17" height="24" rx="1" fill="rgba(90,45,12,0.7)" stroke="rgba(200,152,10,0.25)" stroke-width="0.4"/>
+          <rect x="202" y="148" width="17" height="24" rx="1" fill="rgba(90,45,12,0.7)" stroke="rgba(200,152,10,0.25)" stroke-width="0.4"/>
+          <circle cx="199" cy="161" r="1.8" fill="rgba(200,152,10,0.8)"/>
+          <circle cx="201" cy="161" r="1.8" fill="rgba(200,152,10,0.8)"/>
+
+          <!-- steps -->
+          <rect x="173" y="173" width="54" height="3" fill="rgba(200,152,10,0.2)"  stroke="rgba(200,152,10,0.3)" stroke-width="0.5"/>
+          <rect x="176" y="176" width="48" height="3" fill="rgba(200,152,10,0.12)" stroke="rgba(200,152,10,0.2)" stroke-width="0.4"/>
+
+          <!-- entrance overhead light glow -->
+          <rect x="195" y="145" width="10" height="2" fill="rgba(255,240,180,0.65)" rx="1"/>
+          <ellipse cx="200" cy="180" rx="28" ry="5" fill="rgba(245,200,80,0.06)"/>
+
+          <!-- ── LEFT WING ── -->
+          <rect x="18" y="65" width="84" height="108" fill="rgba(245,200,80,0.03)" stroke="rgba(200,152,10,0.3)" stroke-width="0.8"/>
+          <line x1="18" y1="116" x2="102" y2="116" stroke="rgba(200,152,10,0.15)" stroke-width="0.5"/>
+          <!-- upper -->
+          <rect x="27" y="73" width="18" height="26" fill="url(#wGlow)" stroke="rgba(200,152,10,0.3)" stroke-width="0.5" rx="1"/>
+          <rect x="52" y="73" width="18" height="26" fill="url(#wGlow)" stroke="rgba(200,152,10,0.3)" stroke-width="0.5" rx="1"/>
+          <rect x="77" y="73" width="18" height="26" fill="url(#wGlow)" stroke="rgba(200,152,10,0.28)" stroke-width="0.5" rx="1"/>
+          <!-- lower -->
+          <rect x="27" y="124" width="18" height="24" fill="url(#wGlow)" stroke="rgba(200,152,10,0.25)" stroke-width="0.5" rx="1"/>
+          <rect x="52" y="124" width="18" height="24" fill="url(#wGlow)" stroke="rgba(200,152,10,0.25)" stroke-width="0.5" rx="1"/>
+          <rect x="77" y="124" width="18" height="24" fill="url(#wGlow)" stroke="rgba(200,152,10,0.22)" stroke-width="0.5" rx="1"/>
+          <!-- parapet -->
+          <rect x="18" y="56" width="84" height="11" fill="rgba(200,152,10,0.1)" stroke="rgba(200,152,10,0.28)" stroke-width="0.6"/>
+          <g fill="rgba(200,152,10,0.18)">
+            <rect x="22" y="49" width="7" height="9" rx="1"/><rect x="34" y="49" width="7" height="9" rx="1"/>
+            <rect x="46" y="49" width="7" height="9" rx="1"/><rect x="58" y="49" width="7" height="9" rx="1"/>
+            <rect x="70" y="49" width="7" height="9" rx="1"/><rect x="82" y="49" width="7" height="9" rx="1"/>
+          </g>
+
+          <!-- ── RIGHT WING ── -->
+          <rect x="298" y="65" width="84" height="108" fill="rgba(245,200,80,0.03)" stroke="rgba(200,152,10,0.3)" stroke-width="0.8"/>
+          <line x1="298" y1="116" x2="382" y2="116" stroke="rgba(200,152,10,0.15)" stroke-width="0.5"/>
+          <rect x="303" y="73" width="18" height="26" fill="url(#wGlow)" stroke="rgba(200,152,10,0.28)" stroke-width="0.5" rx="1"/>
+          <rect x="328" y="73" width="18" height="26" fill="url(#wGlow)" stroke="rgba(200,152,10,0.3)"  stroke-width="0.5" rx="1"/>
+          <rect x="353" y="73" width="18" height="26" fill="url(#wGlow)" stroke="rgba(200,152,10,0.3)"  stroke-width="0.5" rx="1"/>
+          <rect x="303" y="124" width="18" height="24" fill="url(#wGlow)" stroke="rgba(200,152,10,0.22)" stroke-width="0.5" rx="1"/>
+          <rect x="328" y="124" width="18" height="24" fill="url(#wGlow)" stroke="rgba(200,152,10,0.25)" stroke-width="0.5" rx="1"/>
+          <rect x="353" y="124" width="18" height="24" fill="url(#wGlow)" stroke="rgba(200,152,10,0.25)" stroke-width="0.5" rx="1"/>
+          <rect x="298" y="56" width="84" height="11" fill="rgba(200,152,10,0.1)" stroke="rgba(200,152,10,0.28)" stroke-width="0.6"/>
+          <g fill="rgba(200,152,10,0.18)">
+            <rect x="302" y="49" width="7" height="9" rx="1"/><rect x="314" y="49" width="7" height="9" rx="1"/>
+            <rect x="326" y="49" width="7" height="9" rx="1"/><rect x="338" y="49" width="7" height="9" rx="1"/>
+            <rect x="350" y="49" width="7" height="9" rx="1"/><rect x="362" y="49" width="7" height="9" rx="1"/>
+          </g>
+
+          <!-- ── portico / canopy on far right (from photo) ── -->
+          <rect x="374" y="140" width="22" height="33" fill="rgba(245,200,80,0.02)" stroke="rgba(200,152,10,0.2)" stroke-width="0.5"/>
+          <rect x="372" y="134" width="26" height="8"  fill="rgba(200,152,10,0.08)" stroke="rgba(200,152,10,0.22)" stroke-width="0.5"/>
+          <line x1="374" y1="134" x2="374" y2="173" stroke="rgba(200,152,10,0.3)" stroke-width="1.2"/>
+          <line x1="384" y1="134" x2="384" y2="173" stroke="rgba(200,152,10,0.3)" stroke-width="1.2"/>
+          <line x1="394" y1="134" x2="394" y2="173" stroke="rgba(200,152,10,0.3)" stroke-width="1.2"/>
+          <!-- pink fountain hint -->
+          <ellipse cx="391" cy="182" rx="7" ry="3" fill="rgba(190,70,190,0.12)" stroke="rgba(190,70,190,0.2)" stroke-width="0.5"/>
+          <path d="M391,182 Q393,174 391,170 Q389,174 391,182" fill="rgba(190,70,190,0.35)"/>
+
+          <!-- ── ground platform ── -->
+          <rect x="10" y="173" width="376" height="4" fill="rgba(200,152,10,0.1)" stroke="rgba(200,152,10,0.22)" stroke-width="0.5"/>
+
+          <!-- ── potted palm plants ── -->
+          <g stroke="rgba(200,152,10,0.3)" stroke-width="0.5">
+            <ellipse cx="26"  cy="179" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="26"  y1="173" x2="26"  y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="42"  cy="178" rx="6" ry="3.5" fill="rgba(70,150,50,0.18)"/><line x1="42"  y1="172" x2="42"  y2="178" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="57"  cy="179" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="57"  y1="173" x2="57"  y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="72"  cy="178" rx="6" ry="3.5" fill="rgba(70,150,50,0.18)"/><line x1="72"  y1="172" x2="72"  y2="178" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="86"  cy="179" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="86"  y1="173" x2="86"  y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <!-- gap for entrance -->
+            <ellipse cx="144" cy="179" rx="6" ry="3.5" fill="rgba(70,150,50,0.18)"/><line x1="144" y1="173" x2="144" y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="158" cy="178" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="158" y1="172" x2="158" y2="178" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="242" cy="178" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="242" y1="172" x2="242" y2="178" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="256" cy="179" rx="6" ry="3.5" fill="rgba(70,150,50,0.18)"/><line x1="256" y1="173" x2="256" y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="308" cy="178" rx="6" ry="3.5" fill="rgba(70,150,50,0.18)"/><line x1="308" y1="172" x2="308" y2="178" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="322" cy="179" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="322" y1="173" x2="322" y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="336" cy="178" rx="6" ry="3.5" fill="rgba(70,150,50,0.18)"/><line x1="336" y1="172" x2="336" y2="178" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+            <ellipse cx="350" cy="179" rx="7" ry="4" fill="rgba(70,150,50,0.2)"/><line x1="350" y1="173" x2="350" y2="179" stroke="rgba(200,152,10,0.4)" stroke-width="1.2"/>
+          </g>
+
+          <!-- ── signage strip at top ── -->
+          <rect x="112" y="19" width="176" height="10" fill="rgba(180,30,30,0.08)" rx="1"/>
+          <text x="200" y="27" text-anchor="middle"
+                font-family="'Cinzel',serif" font-size="7.5" font-weight="bold"
+                fill="rgba(210,55,55,0.85)" letter-spacing="2.5">THE AURIC RESORT</text>
+
+          <!-- ground glow -->
+          <rect x="80" y="177" width="240" height="10" fill="rgba(245,200,80,0.04)"/>
+        </svg>
+      </div>
+      <div class="venue-info">
+        <div class="venue-name-script" id="venueName">The Auric Resort</div>
+        <div class="venue-address" id="venueAddress">Aerodrome Circle, Kota<br>Kota — 324005, Rajasthan</div>
+      </div>
+      <div class="map-area">
+        <iframe id="mapFrame" src="https://maps.google.com/maps?q=The+Auric+Resort+Kota+Rajasthan&output=embed&z=14" allowfullscreen loading="lazy"></iframe>
+        <div class="map-overlay">
+          <a class="open-maps-btn" id="mapsBtn" href="https://maps.google.com/?q=The+Auric+Resort+Kota+Rajasthan" target="_blank">📍 Open in Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <svg class="rays-bg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none;z-index:0;opacity:0.05">
+      <g transform="translate(400,400)" fill="rgba(245,208,80,1)">
+        <rect x="-1" y="-400" width="2" height="800"/>
+        <rect x="-1" y="-400" width="2" height="800" transform="rotate(60)"/>
+        <rect x="-1" y="-400" width="2" height="800" transform="rotate(120)"/>
+      </g>
+    </svg>
+    <div class="diya-row" id="footDiyaRow" style="margin-bottom:28px;position:relative;z-index:1"></div>
+    <div class="footer-names" id="footerNames">Priya & Arjun</div>
+    <div class="footer-sub">With love & blessings · 2026</div>
+    <div class="footer-venue">The Auric Resort · Kota, Rajasthan</div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- FLOAT BUTTONS -->
+<div class="floats" id="floats">
+  <button class="fb f-music" id="musicBtn" onclick="openM('mMusic')" ontouchend="event.preventDefault();event.stopPropagation();openM('mMusic')">🎵<span class="fb-tip">Play / Stop Music</span></button>
+  <button class="fb f-theme" onclick="openM('mTheme')" ontouchend="event.preventDefault();event.stopPropagation();openM('mTheme')">🎨<span class="fb-tip">Change Theme</span></button>
+  <button class="fb f-texteditor" onclick="openM('mTextEditor')" ontouchend="event.preventDefault();event.stopPropagation();openM('mTextEditor')">✏️<span class="fb-tip">Edit All Text</span></button>
+  <button class="fb f-export" onclick="openExportDialog()" ontouchend="event.preventDefault();event.stopPropagation();openExportDialog()">⬇️<span class="fb-tip">Export HTML</span></button>
+</div>
+
+<!-- ADMIN CAPSULE BUTTON -->
+<button class="admin-capsule" onclick="openM('mAdmin')" >🔐 Admin</button>
+
+<!-- THEME MODAL -->
+<div class="overlay" id="mTheme">
+  <div class="modal">
+    <button class="mclose" onclick="closeM('mTheme')">×</button>
+    <h3>🎨 Choose Theme</h3>
+    <div class="theme-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="tbtn on"           onclick="setTheme('','Dark Cinematic',this)"><span>🪔</span>Dark Cinematic</div>
+      <div class="tbtn"              onclick="setTheme('theme-raj','Royal Rajasthani',this)"><span>🏰</span>Royal Rajasthani</div>
+      <div class="tbtn"              onclick="setTheme('theme-mug','Mughal Garden',this)"><span>🌿</span>Mughal Garden</div>
+      <div class="tbtn"              onclick="setTheme('theme-wes','Classic Light',this)"><span>🤍</span>Classic Light</div>
+      <div class="tbtn"              onclick="setTheme('theme-moon','Moonlit Haveli',this)"><span>🌙</span>Moonlit Haveli</div>
+      <div class="tbtn"              onclick="setTheme('theme-rose','Rose Velvet',this)"><span>🌹</span>Rose Velvet</div>
+      <div class="tbtn"              onclick="setTheme('theme-saff','Saffron Sunrise',this)"><span>🔥</span>Saffron Sunrise</div>
+      <div class="tbtn"              onclick="setTheme('theme-copper','Copper Dusk',this)"><span>🟤</span>Copper Dusk</div>
+      <div class="tbtn"              onclick="setTheme('theme-teal','Midnight Teal',this)"><span>🩵</span>Midnight Teal</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- TEXT EDITOR MODAL (left side) -->
+<div class="overlay overlay-left" id="mTextEditor">
+  <div class="modal modal-left">
+    <button class="mclose" onclick="closeM('mTextEditor')">×</button>
+    <h3>✏️ Edit Invitation</h3>
+
+    <!-- Tab bar -->
+    <div class="te-tabs">
+      <button class="te-tab active" id="te-tab-text" onclick="teTab('text',this)">✏️ Text</button>
+      <button class="te-tab" id="te-tab-typo" onclick="teTab('typo',this)">Aa Font &amp; Spacing</button>
+    </div>
+
+    <!-- ── TEXT TAB ── -->
+    <div class="te-tabpanel active" id="te-panel-text">
+    <div class="te-section">Names &amp; Date</div>
+    <div class="te-row"><label>Bride's Name</label><input type="text" id="te-bride" oninput="teLive()" placeholder="Bride"></div>
+    <div class="te-row"><label>Groom's Name</label><input type="text" id="te-groom" oninput="teLive()" placeholder="Groom"></div>
+    <div class="te-row"><label>Wedding Date (display)</label><input type="text" id="te-date" oninput="teLive()" placeholder="18–19 June 2026"></div>
+    <div class="te-row"><label>City</label><input type="text" id="te-city" oninput="teLive()" placeholder="Kota, Rajasthan"></div>
+
+    <div class="te-section">Intro Screen</div>
+    <div class="te-row"><label>Intro Tagline</label><input type="text" id="te-introTagline" oninput="teLive()" placeholder="Together they begin..."></div>
+    <div class="te-row"><label>Tap Button Text</label><input type="text" id="te-tapBtn" oninput="teLive()" placeholder="Tap to Open Invitation"></div>
+
+    <div class="te-section">Hero Section</div>
+    <div class="te-row"><label>Hero Tagline</label><input type="text" id="te-heroTagline" oninput="teLive()" placeholder="Together with their families"></div>
+    <div class="te-row"><label>"Weds" connector</label><input type="text" id="te-weds" oninput="teLive()" placeholder="— weds —"></div>
+
+    <div class="te-section">Countdown</div>
+    <div class="te-row"><label>Section Label</label><input type="text" id="te-cdLabel" oninput="teLive()" placeholder="The Big Day"></div>
+    <div class="te-row"><label>Section Title</label><input type="text" id="te-cdTitle" oninput="teLive()" placeholder="Days Until We Say I Do"></div>
+
+    <div class="te-section">Festivities Section</div>
+    <div class="te-row"><label>Section Label</label><input type="text" id="te-evLabel" oninput="teLive()" placeholder="Celebration Programme"></div>
+    <div class="te-row"><label>Section Title</label><input type="text" id="te-evTitle" oninput="teLive()" placeholder="The Festivities"></div>
+    <div class="te-row"><label>Event 1 Name</label><input type="text" id="te-ev1name" oninput="teLive()" placeholder="Ganesh Poojan"></div>
+    <div class="te-row"><label>Event 1 Details (use | for new line)</label><input type="text" id="te-ev1" oninput="teLive()" placeholder="18th June · 7:30 AM|Venue"></div>
+    <div class="te-row"><label>Event 2 Name</label><input type="text" id="te-ev2name" oninput="teLive()" placeholder="Dholi Kalash"></div>
+    <div class="te-row"><label>Event 2 Details</label><input type="text" id="te-ev2" oninput="teLive()" placeholder="18th June · 9:30 AM|Venue"></div>
+    <div class="te-row"><label>Event 3 Name</label><input type="text" id="te-ev3name" oninput="teLive()" placeholder="Haldi Ceremony"></div>
+    <div class="te-row"><label>Event 3 Details</label><input type="text" id="te-ev3" oninput="teLive()" placeholder="18th June · 11:00 AM|Venue"></div>
+    <div class="te-row"><label>Event 4 Name</label><input type="text" id="te-ev4name" oninput="teLive()" placeholder="Engagement &amp; Sangeet"></div>
+    <div class="te-row"><label>Event 4 Details</label><input type="text" id="te-ev4" oninput="teLive()" placeholder="18th June · 6:00 PM|Venue"></div>
+    <div class="te-row"><label>Event 5 Name</label><input type="text" id="te-ev5name" oninput="teLive()" placeholder="Barat Swagat"></div>
+    <div class="te-row"><label>Event 5 Details</label><input type="text" id="te-ev5" oninput="teLive()" placeholder="19th June · 12:00 PM|Venue"></div>
+    <div class="te-row"><label>Event 6 Name</label><input type="text" id="te-ev6name" oninput="teLive()" placeholder="Panigrahan Sanskar (Phere)"></div>
+    <div class="te-row"><label>Event 6 Details</label><input type="text" id="te-ev6" oninput="teLive()" placeholder="19th June · 2:00 PM|Venue"></div>
+    <div class="te-row"><label>Event 7 Name</label><input type="text" id="te-ev7name" oninput="teLive()" placeholder="Reception"></div>
+    <div class="te-row"><label>Event 7 Details</label><input type="text" id="te-ev7" oninput="teLive()" placeholder="19th June · 7:00 PM|Venue"></div>
+
+    <div class="te-section">Venue Section</div>
+    <div class="te-row"><label>Section Label</label><input type="text" id="te-venueLabel" oninput="teLive()" placeholder="Wedding Venue"></div>
+    <div class="te-row"><label>Section Title</label><input type="text" id="te-venueTitle" oninput="teLive()" placeholder="The Venue"></div>
+    <div class="te-row"><label>Venue Name</label><input type="text" id="te-venueName" oninput="teLive()" placeholder="The Auric Resort"></div>
+    <div class="te-row"><label>Venue Address (use | for new line)</label><input type="text" id="te-venueAddr" oninput="teLive()" placeholder="Address|City"></div>
+
+    <div class="te-section">RSVP Section</div>
+    <div class="te-row"><label>Section Label</label><input type="text" id="te-rsvpLabel" oninput="teLive()" placeholder="Kindly Reply"></div>
+    <div class="te-row"><label>Section Title</label><input type="text" id="te-rsvpTitle" oninput="teLive()" placeholder="RSVP"></div>
+    <div class="te-row"><label>RSVP Button Text</label><input type="text" id="te-rsvpBtn" oninput="teLive()" placeholder="Send RSVP ✦"></div>
+
+    <div class="te-section">Footer</div>
+    <div class="te-row"><label>Footer Sub Text</label><input type="text" id="te-footerSub" oninput="teLive()" placeholder="With love &amp; blessings · 2026"></div>
+    <div class="te-row"><label>Footer Venue Line</label><input type="text" id="te-footerVenue" oninput="teLive()" placeholder="The Auric Resort · Kota, Rajasthan"></div>
+
+    <button class="save-btn" style="margin-top:16px" onclick="teSave()">✦ Save All Changes</button>
+    <button class="typo-reset-btn" style="margin-top:8px;width:100%" onclick="teReset()">↺ Reset to Default</button>
+    </div><!-- /te-panel-text -->
+
+    <!-- ── TYPOGRAPHY TAB ── -->
+    <div class="te-tabpanel" id="te-panel-typo">
+      <div class="te-section" style="margin-top:4px">Choose Text Block</div>
+      <select id="fsBlockSel" class="fs-block-select" onchange="fsRenderBlock()">
+        <option value="">— Select a text block to style —</option>
+      </select>
+      <div id="fsControls"><div class="fs-empty-hint">Select a block above to edit its typography.</div></div>
+      <button class="save-btn" style="margin-top:16px" onclick="fsSaveAll()">✦ Save Typography</button>
+      <button class="typo-reset-btn" style="margin-top:8px;width:100%" onclick="fsResetAll()">↺ Reset All Typography</button>
+    </div><!-- /te-panel-typo -->
+
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="overlay" id="mAdmin">
+  <div class="modal">
+    <button class="mclose" onclick="closeM('mAdmin')">×</button>
+    <h3>🔐 Admin Dashboard</h3>
+    <div id="aLogin">
+      <div class="admin-pwd-wrap">
+        <p style="font-size:14px;color:var(--gold-dim);margin-bottom:16px;font-style:italic">Enter password to continue</p>
+        <input type="password" id="aPwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')aLogin()">
+        <br><button class="admin-go" onclick="aLogin()" style="margin-top:12px">Enter</button>
+        <p class="admin-err" id="aErr">Incorrect password</p>
+      </div>
+    </div>
+    <div class="admin-data" id="aData">
+      <div class="big-num" id="aCount">0</div>
+      <div class="big-lbl" id="aTotal">guests attending</div>
+      <table class="rtable"><thead><tr><th>#</th><th>Name</th><th>Mobile</th><th>Attending</th></tr></thead><tbody id="aTbody"></tbody></table>
+      <button class="exp-btn" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT DIALOG -->
+<div class="overlay" id="mExport">
+  <div class="modal">
+    <button class="mclose" onclick="closeM('mExport')">×</button>
+    <h3>⬇️ Export Invitation</h3>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text-muted);text-align:center;margin-bottom:16px">Choose which floating buttons to include:</p>
+
+    <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin:4px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(200,152,10,0.15);">🎵 Audio</div>
+
+     <div class="export-option selected" id="exOptAudio" onclick="toggleExportOption('audio')">
+       <div class="export-option-check">✓</div>
+       <div class="export-option-icon">🎵</div>
+       <div class="export-option-info">
+         <div class="export-option-name">Include Audio</div>
+         <div class="export-option-desc" id="exAudioTrackDesc">Track: Instrumental Strings</div>
+       </div>
+     </div>
+
+     <div class="export-option selected" id="exOptMusicui" onclick="toggleExportOption('musicui')">
+       <div class="export-option-check">✓</div>
+       <div class="export-option-icon">🎛️</div>
+       <div class="export-option-info">
+         <div class="export-option-name">Show Music Controls</div>
+         <div class="export-option-desc">🎵 button + track selector panel</div>
+       </div>
+     </div>
+
+    <div class="export-option selected" id="exOptTheme" onclick="toggleExportOption('theme')">
+      <div class="export-option-check">✓</div>
+      <div class="export-option-icon">🎨</div>
+      <div class="export-option-info">
+        <div class="export-option-name">Theme Switcher</div>
+        <div class="export-option-desc">Colour theme selector button</div>
+      </div>
+    </div>
+
+    <div class="export-option selected" id="exOptTexteditor" onclick="toggleExportOption('texteditor')">
+      <div class="export-option-check">✓</div>
+      <div class="export-option-icon">✏️</div>
+      <div class="export-option-info">
+        <div class="export-option-name">Text Editor</div>
+        <div class="export-option-desc">Edit all text content live</div>
+      </div>
+    </div>
+
+    <div class="export-option selected" id="exOptTexteditor" onclick="toggleExportOption('texteditor')">
+      </div>
+
+    <div class="export-option" id="exOptExportui" onclick="toggleExportOption('exportui')">
+      <div class="export-option-check"></div>
+      <div class="export-option-icon">⬇️</div>
+      <div class="export-option-info">
+        <div class="export-option-name">Export Feature</div>
+        <div class="export-option-desc">Keep the Export button in the downloaded file</div>
+      </div>
+    </div>
+
+    <button class="export-go-btn" onclick="exportHTML()">⬇ Download Invitation</button>
+    <div class="export-note">Unchecked buttons + their panels will be completely removed from the exported file.</div>
+  </div>
+</div>
+
+<!-- MUSIC MODAL -->
+<div class="overlay" id="mMusic">
+  <div class="modal">
+    <button class="mclose" onclick="closeM('mMusic')">×</button>
+    <h3>🎵 Background Music</h3>
+     <button onclick="toggleMusic()" id="musicPlayBtn" style="width:100%;padding:12px;margin-bottom:14px;background:linear-gradient(135deg,#1a3a5a,#2a70aa);color:#e8f0ff;font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;border:none;border-radius:4px;cursor:pointer;">▶ Play Music</button>
+
+    <div class="music-upload-zone" onclick="document.getElementById('musicFileInput').click()">
+      <input type="file" id="musicFileInput" accept="audio/*" onchange="loadUserMusic(this)">
+      <div style="font-size:28px;margin-bottom:6px">🎼</div>
+      <div class="music-upload-zone-text">Upload Your Music</div>
+      <div class="music-upload-zone-sub" id="uploadedFileName">MP3, WAV, OGG — tap to browse</div>
+    </div>
+
+    <div id="musicTrackList">
+      <div class="music-track on" id="track-strings" onclick="selectMusicTrack('strings',this)">
+        <div class="music-track-icon">🎻</div>
+        <div class="music-track-info">
+          <div class="music-track-name">Instrumental Strings</div>
+          <div class="music-track-desc">Soft, romantic string melody</div>
+        </div>
+        <div class="music-track-status" id="ts-strings">Default</div>
+      </div>
+      <div class="music-track" id="track-yaman" onclick="selectMusicTrack('yaman',this)">
+        <div class="music-track-icon">🪗</div>
+        <div class="music-track-info">
+          <div class="music-track-name">Raag Yaman</div>
+          <div class="music-track-desc">Classical Indian, evening raga</div>
+        </div>
+        <div class="music-track-status" id="ts-yaman"></div>
+      </div>
+      <div class="music-track" id="track-lofi" onclick="selectMusicTrack('lofi',this)">
+        <div class="music-track-icon">🎸</div>
+        <div class="music-track-info">
+          <div class="music-track-name">Lo-fi Romantic</div>
+          <div class="music-track-desc">Warm, dreamy lo-fi chords</div>
+        </div>
+        <div class="music-track-status" id="ts-lofi"></div>
+      </div>
+      <div class="music-track" id="track-tabla" onclick="selectMusicTrack('tabla',this)">
+        <div class="music-track-icon">🥁</div>
+        <div class="music-track-info">
+          <div class="music-track-name">Ambient Tabla Beats</div>
+          <div class="music-track-desc">Soft rhythmic tabla pulse</div>
+        </div>
+        <div class="music-track-status" id="ts-tabla"></div>
+      </div>
+      <div class="music-track" id="track-ambient" onclick="selectMusicTrack('ambient',this)">
+        <div class="music-track-icon">🌊</div>
+        <div class="music-track-info">
+          <div class="music-track-name">Calm Ambient</div>
+          <div class="music-track-desc">Serene, floating atmosphere</div>
+        </div>
+        <div class="music-track-status" id="ts-ambient"></div>
+      </div>
+    </div>
+
+    <div class="music-vol-row">
+      <span class="music-vol-label">Volume</span>
+      <input class="range-slider" type="range" min="1" max="100" value="35" id="musicVol" oninput="setMusicVol(this.value)" style="flex:1">
+      <span class="range-val" id="musicVolVal">35%</span>
+    </div>
+  </div>
+</div>
+<style>
+/* ── ROYAL RAJASTHANI (warm amber) ── */
+body.theme-raj {
+  --dark-bg:#130a02; --dark-mid:#2d1206; --dark-rich:#3d1a08;
+  --gold-bright:#f5c842; --gold-mid:#c88e10; --gold-dim:#a07030;
+  --text-cream:#fdf0d8; --text-muted:rgba(253,230,190,0.55);
+  background:var(--dark-bg);
+}
+body.theme-raj .page,
+body.theme-raj .hero,
+body.theme-raj .countdown-section { background:radial-gradient(ellipse at 50% 0%,#3d1a04 0%,#1a0802 60%,#130a02 100%) !important; }
+body.theme-raj .footer { background:radial-gradient(ellipse at 50% 0%,#3d1a04 0%,#130a02 100%) !important; }
+body.theme-raj #intro-screen { background:radial-gradient(ellipse at 50% 40%,#3d1a04 0%,#2d1206 40%,#130a02 100%) !important; }
+body.theme-raj .modal { background:linear-gradient(160deg,#2d1206 0%,#130a02 100%); }
+body.theme-raj .venue-box { background:rgba(245,200,66,0.04); }
+body.theme-raj .event-item { background:rgba(245,200,66,0.04); }
+
+/* ── MUGHAL GARDEN (green & gold) ── */
+body.theme-mug {
+  --gold-bright:#5cd87a; --gold-mid:#3a9a52; --gold-dim:#4a7a5a;
+  --dark-bg:#030d06; --dark-mid:#071a0c;
+  --text-cream:#e8f5ec; --text-muted:rgba(200,240,210,0.55);
+  background:var(--dark-bg);
+}
+body.theme-mug .page,
+body.theme-mug .hero,
+body.theme-mug .countdown-section { background:radial-gradient(ellipse at 50% 0%,#0d2a14 0%,#071a0c 60%,#030d06 100%) !important; }
+body.theme-mug .footer { background:radial-gradient(ellipse at 50% 0%,#0d2a14 0%,#030d06 100%) !important; }
+body.theme-mug #intro-screen { background:radial-gradient(ellipse at 50% 40%,#0d2a14 0%,#071a0c 40%,#030d06 100%) !important; }
+body.theme-mug .modal { background:linear-gradient(160deg,#0a2010 0%,#030d06 100%); }
+body.theme-mug .sec-title, body.theme-mug .intro-names, body.theme-mug .footer-names,
+body.theme-mug .cd-title, body.theme-mug .venue-name-script { color:var(--gold-bright); text-shadow:0 0 20px rgba(80,200,80,0.3); }
+body.theme-mug .rsvp-btn { background:linear-gradient(135deg,#174a22 0%,#3a9a52 50%,#174a22 100%); }
+
+/* ── CLASSIC LIGHT (ivory & warm gold) ── */
+body.theme-wes {
+  --dark-bg:#fdf8f0; --dark-mid:#f5ede0; --dark-rich:#e8dcc8;
+  --gold-bright:#7a5518; --gold-mid:#9a6a20; --gold-dim:#8a6030;
+  --text-cream:#2d1a04; --text-muted:rgba(60,35,8,0.55);
+  --border-gold:rgba(122,85,24,0.3);
+  background:var(--dark-bg); color:var(--text-cream);
+}
+/* ── CLASSIC LIGHT: Mandala + Diya colour override ── */
+body.theme-wes .mandala-svg .m-r6 *,
+body.theme-wes .mandala-svg .m-r5 *,
+body.theme-wes .mandala-svg .m-r4 *,
+body.theme-wes .mandala-svg .m-r3 *,
+body.theme-wes .mandala-svg .m-r2 *,
+body.theme-wes .mandala-svg .m-r1 *,
+body.theme-wes .mandala-svg .m-outer-spin *,
+body.theme-wes .mandala-svg .m-inner-spin * {
+  stroke: #8b5e1a !important;
+  fill: none !important;
+}
+
+/* Diya bodies (the clay pot parts) */
+body.theme-wes #diyaSVG ellipse {
+  fill: #a06520 !important;
+}
+
+/* Diya flames */
+body.theme-wes #diyaSVG path {
+  fill: #c97c10 !important;
+}
+
+/* Diya glow halos */
+body.theme-wes #diyaSVG .mini-flame-g ellipse {
+  fill: rgba(180, 100, 20, 0.25) !important;
+}
+body.theme-wes .page,
+body.theme-wes .hero,
+body.theme-wes .countdown-section { background:linear-gradient(180deg,#fdf8f0 0%,#f5ede0 100%) !important; }
+body.theme-wes .footer { background:linear-gradient(180deg,#f5ede0 0%,#e8dcc8 100%) !important; }
+body.theme-wes #intro-screen { background:radial-gradient(ellipse at 50% 40%,#e8d8b0 0%,#d8c498 40%,#c8b080 100%) !important; }
+body.theme-wes .modal { background:linear-gradient(160deg,#fdf4e4 0%,#f0e4cc 100%); color:var(--text-cream); }
+body.theme-wes .modal h3 { color:var(--gold-bright); }
+body.theme-wes .ef label, body.theme-wes .field label { color:var(--gold-dim); }
+body.theme-wes .ef input, body.theme-wes .field input, body.theme-wes .field select { background:rgba(122,85,24,0.06); border-color:rgba(122,85,24,0.3); color:var(--text-cream); }
+body.theme-wes .field select option { background:#f5ede0; color:var(--text-cream); }
+body.theme-wes .venue-box { background:rgba(122,85,24,0.04); border-color:rgba(122,85,24,0.2); }
+body.theme-wes .event-item { background:rgba(122,85,24,0.04); border-color:rgba(122,85,24,0.18); }
+body.theme-wes .rsvp-box { background:rgba(122,85,24,0.04); border-color:rgba(122,85,24,0.2); }
+body.theme-wes .cd-num { background:rgba(122,85,24,0.06); border-color:rgba(122,85,24,0.25); color:var(--gold-bright); }
+body.theme-wes .page::before { background:linear-gradient(90deg,transparent,rgba(122,85,24,0.4),transparent); }
+body.theme-wes .footer-sub, body.theme-wes .footer-venue { color:rgba(60,35,8,0.5); }
+body.theme-wes .tbtn { background:rgba(122,85,24,0.05); border-color:rgba(122,85,24,0.25); color:var(--gold-dim); }
+body.theme-wes .tbtn:hover, body.theme-wes .tbtn.on { background:rgba(122,85,24,0.14); }
+body.theme-wes .intro-names { color:var(--gold-bright); text-shadow:0 0 20px rgba(122,85,24,0.35); }
+body.theme-wes .hero-names-big { color:#2d1a04; text-shadow:0 2px 12px rgba(122,85,24,0.25); }
+body.theme-wes .sec-title, body.theme-wes .cd-title, body.theme-wes .venue-name-script,
+body.theme-wes .footer-names { color:var(--gold-bright); }
+body.theme-wes .mclose { color:var(--gold-dim); }
+body.theme-wes .admin-go { background:linear-gradient(135deg,#2a5a1a,#4a9a2a); }
+body.theme-wes .rsvp-btn { background:linear-gradient(135deg,#5a2e00 0%,#9a6820 50%,#5a2e00 100%); color:#fffbee; }
+body.theme-wes .save-btn { background:linear-gradient(135deg,#5a2e00,#9a6820,#5a2e00); color:#fffbee; }
+body.theme-wes .hero-light { background:radial-gradient(ellipse at center bottom,rgba(122,85,24,0.1) 0%,transparent 70%); }
+body.theme-wes .hero-tagline { color:rgba(80,45,8,0.75); }
+body.theme-wes .hero-date-tag { color:rgba(80,45,8,0.8); border-top-color:rgba(122,85,24,0.3); border-bottom-color:rgba(122,85,24,0.3); }
+body.theme-wes .intro-tagline { color:rgba(80,45,8,0.65); }
+body.theme-wes .intro-date { color:rgba(80,45,8,0.6); }
+body.theme-wes .intro-tap { color:#5a2e00; border-color:rgba(122,85,24,0.55); background:rgba(122,85,24,0.1); box-shadow:none; }
+body.theme-wes .scroll-down { color:rgba(80,45,8,0.4); }
+body.theme-wes .cd-label { color:var(--gold-dim); }
+body.theme-wes .cd-sep { color:rgba(100,60,10,0.35); }
+body.theme-wes .cd-unit-label { color:rgba(60,35,8,0.6); }
+body.theme-wes .sec-label { color:var(--gold-dim); }
+body.theme-wes .gold-rule { background:linear-gradient(90deg,transparent,var(--gold-mid),transparent); }
+body.theme-wes .event-name { color:var(--gold-bright); }
+body.theme-wes .event-detail { color:rgba(60,35,8,0.65); }
+body.theme-wes .venue-address { color:rgba(60,35,8,0.65); }
+body.theme-wes .open-maps-btn { color:#5a2e00; border-color:rgba(122,85,24,0.5); background:rgba(122,85,24,0.08); }
+body.theme-wes .open-maps-btn:hover { background:rgba(122,85,24,0.16); }
+body.theme-wes .rsvp-success { color:var(--gold-bright); }
+body.theme-wes .cd-title { color:var(--gold-bright); text-shadow:0 0 20px rgba(122,85,24,0.25); }
+body.theme-wes .hero-names-big .amp-line { color:rgba(80,45,8,0.7); }
+body.theme-wes .footer::before { background:linear-gradient(90deg,transparent,rgba(122,85,24,0.4),transparent); }
+body.theme-wes .page::after { background:linear-gradient(90deg,transparent,rgba(122,85,24,0.3),transparent); }
+body.theme-wes .countdown-section { background:linear-gradient(180deg,#f5ede0 0%,#ede0cc 100%) !important; }
+body.theme-wes .countdown-section::before,
+body.theme-wes .countdown-section::after { background:linear-gradient(90deg,transparent,rgba(122,85,24,0.35),transparent); }
+body.theme-wes .modal h3 { color:var(--gold-bright); }
+body.theme-wes .music-track-name { color:var(--gold-bright); }
+body.theme-wes .music-track-desc { color:rgba(60,35,8,0.6); }
+body.theme-wes .music-track { border-color:rgba(122,85,24,0.25); background:rgba(122,85,24,0.04); }
+body.theme-wes .music-track:hover, body.theme-wes .music-track.on { background:rgba(122,85,24,0.12); border-color:var(--gold-mid); }
+body.theme-wes .music-track-status { color:var(--gold-mid); }
+body.theme-wes .music-upload-zone { border-color:rgba(122,85,24,0.35); }
+body.theme-wes .music-upload-zone-text { color:var(--gold-dim); }
+body.theme-wes .music-upload-zone-sub { color:rgba(60,35,8,0.55); }
+body.theme-wes .music-vol-label { color:var(--gold-dim); }
+body.theme-wes .export-option { border-color:rgba(122,85,24,0.25); background:rgba(122,85,24,0.04); }
+body.theme-wes .export-option.selected { background:rgba(122,85,24,0.12); border-color:var(--gold-mid); }
+body.theme-wes .export-option-name { color:var(--gold-bright); }
+body.theme-wes .export-option-desc { color:rgba(60,35,8,0.6); }
+body.theme-wes .export-note { color:rgba(60,35,8,0.5); }
+body.theme-wes body.theme-wes body.theme-wes .typo-toggle.on { background:rgba(122,85,24,0.15); border-color:var(--gold-mid); color:var(--gold-bright); }
+body.theme-wes .admin-capsule { background:linear-gradient(135deg,#2a5a1a,#4a9a2a); color:#d8f0d8; }
+body.theme-wes .fb.f-theme { background:linear-gradient(135deg,#4a1a8a,#7a3aba); }
+body.theme-wes .fb.f-music { background:linear-gradient(135deg,#1a3a5a,#2a70aa); }
+body.theme-wes .fb.f-export { background:linear-gradient(135deg,#3a1a5a,#7a3aba); }
+body.theme-wes .fb.f-texteditor { background:linear-gradient(135deg,#8a2a10,#c05020); }
+body.theme-wes #intro-screen .sparkle { background:rgba(122,85,24,0.8); }
+
+/* ── MOONLIT HAVELI (deep indigo & silver) ── */
+body.theme-moon {
+  --dark-bg:#04030e; --dark-mid:#0a0820; --dark-rich:#140c30;
+  --gold-bright:#c8d8f8; --gold-mid:#8898cc; --gold-dim:#6070a8;
+  --gold-glow:rgba(160,180,255,0.12);
+  --text-cream:#e8eeff; --text-muted:rgba(200,215,255,0.5);
+  --border-gold:rgba(136,152,204,0.3);
+  background:var(--dark-bg);
+}
+body.theme-moon .page,
+body.theme-moon .hero,
+body.theme-moon .countdown-section { background:radial-gradient(ellipse at 50% 0%,#1a1040 0%,#0a0820 60%,#04030e 100%) !important; }
+body.theme-moon .footer { background:radial-gradient(ellipse at 50% 0%,#1a1040 0%,#04030e 100%) !important; }
+body.theme-moon #intro-screen { background:radial-gradient(ellipse at 50% 40%,#1a1040 0%,#0d0a28 40%,#04030e 100%) !important; }
+body.theme-moon .modal { background:linear-gradient(160deg,#0e0c28 0%,#04030e 100%); }
+body.theme-moon .sec-title, body.theme-moon .intro-names, body.theme-moon .footer-names,
+body.theme-moon .cd-title, body.theme-moon .venue-name-script { color:var(--gold-bright); text-shadow:0 0 30px rgba(160,180,255,0.4); }
+body.theme-moon .rsvp-btn { background:linear-gradient(135deg,#1a1840 0%,#4a50a0 50%,#1a1840 100%); }
+body.theme-moon .save-btn { background:linear-gradient(135deg,#1a1840,#4a50a0,#1a1840); }
+body.theme-moon .hero-names-big { text-shadow:0 2px 20px rgba(160,180,255,0.5),0 0 50px rgba(160,180,255,0.15); }
+body.theme-moon .intro-tagline, body.theme-moon .hero-tagline { color:rgba(160,180,255,0.55); }
+body.theme-moon .intro-tap { color:var(--gold-bright); border-color:rgba(136,152,204,0.55); background:rgba(136,152,204,0.08); }
+body.theme-moon .sparkle { background:var(--gold-bright); }
+
+/* ── ROSE VELVET (burgundy & champagne) ── */
+body.theme-rose {
+  --dark-bg:#0e0208; --dark-mid:#200814; --dark-rich:#2e0c1c;
+  --gold-bright:#f5c8d8; --gold-mid:#c87898; --gold-dim:#a05878;
+  --gold-glow:rgba(245,180,210,0.12);
+  --text-cream:#fce8f0; --text-muted:rgba(245,220,235,0.5);
+  --border-gold:rgba(200,120,152,0.3);
+  background:var(--dark-bg);
+}
+body.theme-rose .page,
+body.theme-rose .hero,
+body.theme-rose .countdown-section { background:radial-gradient(ellipse at 50% 0%,#3a0c1e 0%,#200814 60%,#0e0208 100%) !important; }
+body.theme-rose .footer { background:radial-gradient(ellipse at 50% 0%,#3a0c1e 0%,#0e0208 100%) !important; }
+body.theme-rose #intro-screen { background:radial-gradient(ellipse at 50% 40%,#3a0c1e 0%,#200814 40%,#0e0208 100%) !important; }
+body.theme-rose .modal { background:linear-gradient(160deg,#20081a 0%,#0e0208 100%); }
+body.theme-rose .sec-title, body.theme-rose .intro-names, body.theme-rose .footer-names,
+body.theme-rose .cd-title, body.theme-rose .venue-name-script { color:var(--gold-bright); text-shadow:0 0 30px rgba(245,150,200,0.4); }
+body.theme-rose .rsvp-btn { background:linear-gradient(135deg,#5a0c28 0%,#c87898 50%,#5a0c28 100%); }
+body.theme-rose .save-btn { background:linear-gradient(135deg,#5a0c28,#c87898,#5a0c28); }
+body.theme-rose .hero-names-big { text-shadow:0 2px 20px rgba(245,150,200,0.5),0 0 50px rgba(245,150,200,0.15); }
+body.theme-rose .intro-tap { color:var(--gold-bright); border-color:rgba(200,120,152,0.55); background:rgba(200,120,152,0.08); }
+body.theme-rose .petal { filter:hue-rotate(300deg); }
+
+
+
+
+
+/* ── SAFFRON SUNRISE (orange terracotta & copper) ── */
+body.theme-saff {
+  --dark-bg:#0e0500; --dark-mid:#1e0a00; --dark-rich:#2e1200;
+  --gold-bright:#f5a840; --gold-mid:#d07820; --gold-dim:#b06020;
+  --gold-glow:rgba(245,168,64,0.15);
+  --text-cream:#fff0d8; --text-muted:rgba(255,235,190,0.5);
+  --border-gold:rgba(208,120,32,0.3);
+  background:var(--dark-bg);
+}
+body.theme-saff .page,
+body.theme-saff .hero,
+body.theme-saff .countdown-section { background:radial-gradient(ellipse at 50% 0%,#3a1400 0%,#200800 60%,#0e0500 100%) !important; }
+body.theme-saff .footer { background:radial-gradient(ellipse at 50% 0%,#3a1400 0%,#0e0500 100%) !important; }
+body.theme-saff #intro-screen { background:radial-gradient(ellipse at 50% 40%,#3a1400 0%,#200800 40%,#0e0500 100%) !important; }
+body.theme-saff .modal { background:linear-gradient(160deg,#200a00 0%,#0e0500 100%); }
+body.theme-saff .sec-title, body.theme-saff .intro-names, body.theme-saff .footer-names,
+body.theme-saff .cd-title, body.theme-saff .venue-name-script { color:var(--gold-bright); text-shadow:0 0 30px rgba(245,140,30,0.5); }
+body.theme-saff .rsvp-btn { background:linear-gradient(135deg,#6a2800 0%,#d07820 50%,#6a2800 100%); }
+body.theme-saff .save-btn { background:linear-gradient(135deg,#6a2800,#d07820,#6a2800); }
+body.theme-saff .hero-names-big { text-shadow:0 2px 20px rgba(245,140,30,0.6),0 0 50px rgba(245,140,30,0.2); }
+body.theme-saff .intro-tap { color:var(--gold-bright); border-color:rgba(208,120,32,0.55); background:rgba(208,120,32,0.1); }
+body.theme-saff .petal { filter:hue-rotate(20deg) saturate(1.5); }
+
+
+
+
+/* ── COPPER DUSK (near-black charcoal + deep copper/bronze) ── */
+body.theme-copper {
+  --dark-bg:#080606; --dark-mid:#160e08; --dark-rich:#241608;
+  --gold-bright:#d4783a; --gold-mid:#a05828; --gold-dim:#7a4220;
+  --gold-glow:rgba(212,120,58,0.14);
+  --text-cream:#fae8d8; --text-muted:rgba(245,215,185,0.5);
+  --border-gold:rgba(160,88,40,0.3);
+  background:var(--dark-bg);
+}
+body.theme-copper .page,
+body.theme-copper .hero,
+body.theme-copper .countdown-section { background:radial-gradient(ellipse at 50% 0%,#2a1204 0%,#180a02 60%,#080606 100%) !important; }
+body.theme-copper .footer { background:radial-gradient(ellipse at 50% 0%,#2a1204 0%,#080606 100%) !important; }
+body.theme-copper #intro-screen { background:radial-gradient(ellipse at 50% 40%,#2a1204 0%,#1a0c04 40%,#080606 100%) !important; }
+body.theme-copper .modal { background:linear-gradient(160deg,#180a04 0%,#080606 100%); }
+body.theme-copper .sec-title, body.theme-copper .intro-names, body.theme-copper .footer-names,
+body.theme-copper .cd-title, body.theme-copper .venue-name-script { color:var(--gold-bright); text-shadow:0 0 30px rgba(212,100,30,0.55); }
+body.theme-copper .hero-names-big { text-shadow:0 2px 20px rgba(212,100,30,0.6),0 0 50px rgba(212,100,30,0.18); }
+body.theme-copper .rsvp-btn { background:linear-gradient(135deg,#4a1a00 0%,#a05828 50%,#4a1a00 100%); }
+body.theme-copper .save-btn { background:linear-gradient(135deg,#4a1a00,#a05828,#4a1a00); }
+body.theme-copper .intro-tap { color:var(--gold-bright); border-color:rgba(160,88,40,0.55); background:rgba(160,88,40,0.1); }
+body.theme-copper .sparkle { background:var(--gold-bright); }
+body.theme-copper .petal { filter:hue-rotate(30deg) saturate(1.3); }
+body.theme-copper .page::before { background:linear-gradient(90deg,transparent,rgba(160,88,40,0.45),transparent); }
+
+/* ── MIDNIGHT TEAL (deep near-black + vivid teal/turquoise) ── */
+body.theme-teal {
+  --dark-bg:#030b0d; --dark-mid:#051518; --dark-rich:#082028;
+  --gold-bright:#3adbd4; --gold-mid:#1aaba6; --gold-dim:#188080;
+  --gold-glow:rgba(58,219,212,0.12);
+  --text-cream:#d8f5f4; --text-muted:rgba(180,235,232,0.5);
+  --border-gold:rgba(26,171,166,0.3);
+  background:var(--dark-bg);
+}
+body.theme-teal .page,
+body.theme-teal .hero,
+body.theme-teal .countdown-section { background:radial-gradient(ellipse at 50% 0%,#082028 0%,#051518 60%,#030b0d 100%) !important; }
+body.theme-teal .footer { background:radial-gradient(ellipse at 50% 0%,#082028 0%,#030b0d 100%) !important; }
+body.theme-teal #intro-screen { background:radial-gradient(ellipse at 50% 40%,#082028 0%,#061a20 40%,#030b0d 100%) !important; }
+body.theme-teal .modal { background:linear-gradient(160deg,#061c22 0%,#030b0d 100%); }
+body.theme-teal .sec-title, body.theme-teal .intro-names, body.theme-teal .footer-names,
+body.theme-teal .cd-title, body.theme-teal .venue-name-script { color:var(--gold-bright); text-shadow:0 0 30px rgba(40,200,195,0.5); }
+body.theme-teal .hero-names-big { text-shadow:0 2px 20px rgba(40,200,195,0.55),0 0 50px rgba(40,200,195,0.15); }
+body.theme-teal .rsvp-btn { background:linear-gradient(135deg,#022028 0%,#1aaba6 50%,#022028 100%); }
+body.theme-teal .save-btn { background:linear-gradient(135deg,#022028,#1aaba6,#022028); }
+body.theme-teal .intro-tap { color:var(--gold-bright); border-color:rgba(26,171,166,0.55); background:rgba(26,171,166,0.08); }
+body.theme-teal .sparkle { background:var(--gold-bright); }
+body.theme-teal .petal { filter:hue-rotate(160deg) saturate(1.2); }
+body.theme-teal .page::before { background:linear-gradient(90deg,transparent,rgba(26,171,166,0.4),transparent); }
+body.theme-teal .cd-num { border-color:rgba(26,171,166,0.3); }
+body.theme-teal .hero-light { background:radial-gradient(ellipse at center bottom,rgba(40,200,195,0.1) 0%,transparent 70%); }
+
+/* ── TEXT EDITOR FLOATING BUTTON ── */
+.fb.f-texteditor { background:linear-gradient(135deg,#8a2a10,#c05020); }
+
+/* ── LEFT-SIDE MODAL (text editor) ── */
+.overlay-left { align-items:flex-end; justify-content:flex-start; }
+.modal-left {
+  border-radius:0 12px 12px 0;
+  border:1px solid rgba(200,152,10,0.3);
+  border-right:2px solid rgba(200,152,10,0.5);
+  border-left:none;
+  box-shadow:12px 0 50px rgba(0,0,0,0.85), 2px 0 20px rgba(200,152,10,0.1);
+  animation:slideInLeft 0.28s cubic-bezier(0.22,0.8,0.3,1);
+  align-self:flex-end;
+  opacity: 0.75; /* Change this between 0.5 (very clear) and 1.0 (solid) */
+   transition: opacity 0.3s ease;
+}
+@keyframes slideInLeft { from{transform:translateX(-100%);opacity:0} to{transform:translateX(0);opacity:1} }
+.modal-left .mclose { right:auto; left:12px; }
+
+/* Text editor rows */
+.te-section {
+  font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold-bright); margin:18px 0 10px;
+  border-bottom:1px solid rgba(200,152,10,0.2); padding-bottom:6px;
+}
+.te-section:first-of-type { margin-top:4px; }
+.te-row { margin-bottom:10px; }
+.te-row label { display:block; font-family:'Cinzel',serif; font-size:8px; letter-spacing:2px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:4px; }
+.te-row input { width:100%; background:rgba(245,208,80,0.05); border:1px solid rgba(200,152,10,0.3); color:var(--text-cream); font-family:'Cormorant Garamond',serif; font-size:14px; padding:8px 10px; border-radius:3px; outline:none; transition:border-color 0.2s; }
+.te-row input:focus { border-color:var(--gold-mid); background:rgba(245,208,80,0.09); }
+.te-row input::placeholder { color:var(--text-muted); }
+
+/* Light theme text editor overrides */
+body.theme-wes .te-section { color:var(--gold-bright); border-bottom-color:rgba(122,85,24,0.2); }
+body.theme-wes .te-row label { color:var(--gold-dim); }
+body.theme-wes .te-row input { background:rgba(122,85,24,0.05); border-color:rgba(122,85,24,0.3); color:var(--text-cream); }
+body.theme-wes .te-row input:focus { border-color:var(--gold-mid); background:rgba(122,85,24,0.1); }
+
+/* ── TEXT EDITOR TABS ── */
+.te-tabs { display:flex; gap:0; margin:-4px -4px 16px -4px; border-bottom:1px solid rgba(200,152,10,0.25); }
+.te-tab { flex:1; padding:10px 4px; font-family:'Cinzel',serif; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--gold-dim); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:all 0.2s; }
+.te-tab:hover { color:var(--gold-bright); }
+.te-tab.active { color:var(--gold-bright); border-bottom-color:var(--gold-bright); }
+.te-tabpanel { display:none; }
+.te-tabpanel.active { display:block; }
+
+/* ── FONT & SPACING PANEL ── */
+.fs-block-select {
+  width:100%; background:rgba(245,208,80,0.05); border:1px solid rgba(200,152,10,0.35);
+  color:var(--text-cream); font-family:'Cormorant Garamond',serif; font-size:14px;
+  padding:9px 10px; border-radius:4px; outline:none; cursor:pointer; margin-bottom:14px;
+  -webkit-appearance:none; appearance:none;
+}
+.fs-block-select option { background:#1a0810; color:var(--text-cream); }
+.fs-block-select:focus { border-color:var(--gold-mid); }
+.fs-line-header {
+  font-family:'Cinzel',serif; font-size:8px; letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--gold-bright); margin:14px 0 8px;
+  padding-bottom:5px; border-bottom:1px solid rgba(200,152,10,0.18);
+}
+.fs-ctrl-row { display:flex; align-items:center; gap:8px; margin-bottom:9px; }
+.fs-ctrl-label { font-family:'Cinzel',serif; font-size:7.5px; letter-spacing:1px; color:var(--gold-dim); text-transform:uppercase; min-width:82px; flex-shrink:0; }
+.fs-ctrl-slider { flex:1; -webkit-appearance:none; appearance:none; height:3px; border-radius:2px; background:rgba(200,152,10,0.22); outline:none; cursor:pointer; }
+.fs-ctrl-slider::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--gold-bright); cursor:pointer; box-shadow:0 0 6px rgba(245,190,60,0.45); }
+.fs-ctrl-val { font-family:'Cinzel',serif; font-size:9px; color:var(--gold-bright); min-width:38px; text-align:right; flex-shrink:0; }
+.fs-font-select { flex:1; background:rgba(245,208,80,0.05); border:1px solid rgba(200,152,10,0.25); color:var(--text-cream); font-size:11px; padding:5px 7px; border-radius:3px; outline:none; cursor:pointer; -webkit-appearance:none; }
+.fs-font-select option { background:#1a0810; color:var(--text-cream); }
+.fs-group-gap-box { margin:10px 0 6px; padding:10px 12px; background:rgba(245,208,80,0.03); border:1px solid rgba(200,152,10,0.18); border-radius:4px; }
+.fs-group-gap-title { font-family:'Cinzel',serif; font-size:7.5px; letter-spacing:2px; text-transform:uppercase; color:rgba(245,208,80,0.5); margin-bottom:8px; }
+.fs-reset-block { font-family:'Cinzel',serif; font-size:7.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-dim); background:none; border:1px solid rgba(200,152,10,0.2); border-radius:3px; padding:5px 10px; cursor:pointer; transition:all 0.2s; margin-top:6px; width:100%; }
+.fs-reset-block:hover { border-color:var(--gold-mid); color:var(--gold-bright); }
+.fs-empty-hint { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--text-muted); text-align:center; padding:20px 0; }
+
+
+/* ── TEXT LINE SPANS ── */
+.tl-0, .tl-1, .tl-2, .tl-3 {
+  display:inline;
+  transition: font-size 0.2s, letter-spacing 0.2s, font-weight 0.2s;
+}
+
+/* ── RANGE SLIDER (music volume) ── */
+.range-slider { flex:1; -webkit-appearance:none; appearance:none; height:3px; border-radius:2px; background:rgba(200,152,10,0.25); outline:none; cursor:pointer; }
+.range-slider::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--gold-bright); cursor:pointer; box-shadow:0 0 8px rgba(245,190,60,0.4); }
+.range-val { font-family:'Cinzel',serif; font-size:10px; color:var(--gold-bright); min-width:38px; text-align:right; }
+
+/* ── MUSIC MODAL ── */
+#mMusic .modal { max-width:400px; }
+.music-track { display:flex; align-items:center; gap:12px; padding:14px 12px; border:1px solid rgba(200,152,10,0.2); border-radius:4px; cursor:pointer; margin-bottom:10px; background:rgba(245,208,80,0.03); transition:all 0.2s; }
+.music-track:hover, .music-track.on { background:rgba(245,208,80,0.1); border-color:var(--gold-mid); }
+.music-track-icon { font-size:22px; width:32px; text-align:center; flex-shrink:0; }
+.music-track-info { flex:1; }
+.music-track-name { font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold-bright); margin-bottom:2px; }
+.music-track-desc { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--text-muted); }
+.music-track-status { font-size:11px; color:var(--gold-mid); font-family:'Cinzel',serif; min-width:50px; text-align:right; }
+.music-upload-zone { border:1px dashed rgba(200,152,10,0.35); border-radius:4px; padding:18px; text-align:center; cursor:pointer; margin-bottom:10px; transition:all 0.2s; }
+.music-upload-zone:hover { background:rgba(245,208,80,0.06); border-color:var(--gold-mid); }
+.music-upload-zone input[type=file] { display:none; }
+.music-upload-zone-text { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--gold-dim); text-transform:uppercase; }
+.music-upload-zone-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--text-muted); margin-top:4px; }
+.music-vol-row { display:flex; align-items:center; gap:12px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(200,152,10,0.15); }
+.music-vol-label { font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px; color:var(--gold-dim); text-transform:uppercase; min-width:50px; }
+
+/* ── EXPORT BUTTON ── */
+.fb.f-export { background:linear-gradient(135deg,#3a1a5a,#7a3aba); }
+
+/* ── EXPORT DIALOG ── */
+#mExport .modal { max-width:360px; }
+.export-option {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 12px; border:1px solid rgba(200,152,10,0.2);
+  border-radius:6px; cursor:pointer; margin-bottom:10px;
+  background:rgba(245,208,80,0.03); transition:all 0.2s; user-select:none;
+}
+.export-option:hover { background:rgba(245,208,80,0.08); border-color:var(--gold-mid); }
+.export-option.selected { background:rgba(245,208,80,0.12); border-color:var(--gold-bright); }
+.export-option-check {
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid rgba(200,152,10,0.5); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; transition:all 0.2s;
+}
+.export-option.selected .export-option-check { background:var(--gold-bright); border-color:var(--gold-bright); color:#1a0810; }
+.export-option-icon { font-size:22px; flex-shrink:0; }
+.export-option-info { flex:1; }
+.export-option-name { font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--gold-bright); margin-bottom:2px; }
+.export-option-desc { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--text-muted); }
+.export-go-btn { width:100%; background:linear-gradient(135deg,#3a1a5a,#7a3aba); color:#e8d8ff; font-family:'Cinzel',serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; padding:13px; border:none; border-radius:3px; cursor:pointer; margin-top:6px; transition:all 0.2s; }
+.export-go-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(100,50,200,0.4); }
+.export-note { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:12px; color:var(--text-muted); text-align:center; margin-top:10px; line-height:1.6; }
+</style>
+
+<script>
+// ===== STATE =====
+const PASS = 'wedding2026';
+let rsvps = JSON.parse(localStorage.getItem('wRsvps')||'[]');
+const dressCodes = {ev1:'',ev2:'',ev3:'🎨 ' + 'ANY BLUE COLOR',ev4:'',ev5:'',ev6:'',ev7:'👗👔 ' };
+let weddingDT = new Date('2026-06-18T07:30:00+05:30');
+let wd = {
+  bride:'Priya', groom:'Arjun',
+  date:'18–19 June 2026', city:'Kota, Rajasthan',
+  venue:'The Auric Resort',
+  addr:'Aerodrome Circle, Kota|Kota — 324005, Rajasthan',
+  mapLink: 'https://www.google.com/maps/search/?api=1&query=The+Auric+Resort,+Kota',
+   embedLink: 'https://maps.google.com/maps?q=The%20Auric%20Resort,%20Kota&t=&z=14&ie=UTF8&iwloc=&output=embed',
+  ev1:'18th June, 2026 · 7:30 AM|Venue, Jaipur',
+  ev2:'18th June, 2026 · 9:30 AM|Venue, Jaipur',
+  ev3:'18th June, 2026 · 11:00 AM|Venue, Jaipur',
+  ev4:'18th June, 2026 · 6:00 PM|Venue, Jaipur',
+  ev5:'19th June, 2026 · 12:00 PM|The Auric Resort, Kota',
+  ev6:'19th June, 2026 · 2:00 PM|The Auric Resort, Kota',
+  ev7:'19th June, 2026 · 7:00 PM|The Auric Resort, Kota',
+  sheetUrl:'https://script.google.com/macros/s/AKfycbwsdSW2uP4Bh4Pto5QKUdbqzcmJMkPnJ7AIIZPTpW2NZEc9ARsZS5ssoByUN5tbjZAtgw/exec',
+  // ── Text-editor extra fields ──
+  introTagline:'You are cordially invited',
+  tapBtn:'✦ Tap anywhere to open ✦',
+  heroTagline:'Together with their families',
+  weds:'— weds —',
+  cdLabel:'Days Until We Say',
+  cdTitle:'I Do',
+  evLabel:'Celebration Programme',
+  evTitle:'The Festivities',
+  ev1name:'Ganesh Poojan',
+  ev2name:'Dholi Kalash',
+  ev3name:'Haldi Ceremony',
+  ev4name:'Engagement & Sangeet',
+  ev5name:'Barat Swagat',
+  ev6name:'Panigrahan Sanskar (Phere)',
+  ev7name:'Reception',
+  venueLabel:'Wedding Venue',
+  venueTitle:'The Venue',
+  rsvpLabel:'Kindly Reply',
+  rsvpTitle:'RSVP',
+  rsvpBtn:'Send RSVP ✦',
+  footerSub:'With love & blessings · 2026',
+  footerVenue:'The Auric Resort · Kota, Rajasthan'
+};
+
+// ===== SPARKLES =====
+function initSparkles(){
+  const wrap = document.getElementById('sparkleWrap');
+  wrap.innerHTML = ''; 
+  
+  for(let i=0; i<80; i++){
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    
+    const size = 1.0 + Math.random() * 3.0;
+    const depth = 0.05 + Math.random() * 0.2; // Reduced speed for elegance
+    
+    // Set initial random positions
+    const posX = Math.random() * 100;
+    const posY = Math.random() * 100;
+    
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = posX + '%';
+    s.style.top = posY + '%';
+    
+    // Store data for the scroll effect
+    s.dataset.depth = depth;
+    
+    s.style.animationDelay = (Math.random() * 5) + 's';
+    
+    wrap.appendChild(s);
+  }
+}
+
+// THE DRIFT LOGIC
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const particles = document.querySelectorAll('.sparkle');
+  
+  particles.forEach(p => {
+    const depth = parseFloat(p.dataset.depth);
+    // Use 'top' instead of 'translateY' to avoid conflicts with CSS scale animation
+    const move = scrolled * depth;
+    p.style.marginTop = (move * -1) + 'px';
+  });
+});
+
+// ===== FLAME ANIMATION (JS-driven, correct) =====
+// Each flame is animated by JS RAF with independent noise offsets
+// flameTargets: [{el, phase, speed, scaleX, scaleY, skew}]
+let flameTargets = [];
+let flameRAF = null;
+let flameRunning = false;
+
+function initFlames(){
+  flameTargets = [];
+  document.querySelectorAll('.mini-flame-g').forEach(el=>{
+    el.setAttribute('transform','scale(0,0)'); // ← add this line
+    flameTargets.push({
+      el,
+      phase: Math.random()*Math.PI*2,
+      speed: 4 + Math.random()*3,
+      ampX:  0.12 + Math.random()*0.10,
+      ampY:  0.10 + Math.random()*0.08,
+      ampSkew: 6  + Math.random()*5
+    });
+  });
+}
+
+
+function animateFlames(ts){
+  const t = ts / 1000;
+  for(const f of flameTargets){
+    const angle = f.phase + t * f.speed;
+    const sx = 1 + Math.sin(angle * 1.3) * f.ampX;
+    const sy = 1 + Math.sin(angle * 0.9 + 0.5) * f.ampY;
+    const sk = Math.sin(angle * 1.1 + 1.0) * f.ampSkew;
+    f.el.setAttribute('transform', `skewX(${sk.toFixed(2)}) scale(${sx.toFixed(3)},${sy.toFixed(3)})`);
+  }
+  if(flameRunning) flameRAF = requestAnimationFrame(animateFlames);
+}
+
+function startFlames(){
+  flameRunning = true;
+  if(!flameRAF) flameRAF = requestAnimationFrame(animateFlames);
+}
+function stopFlames(){
+  flameRunning = false;
+  if(flameRAF){ cancelAnimationFrame(flameRAF); flameRAF=null; }
+}
+
+function kindleDiyas(){
+  const grp = document.getElementById('diyaSVG');
+  if(!grp) return;
+  const kids = grp.children;
+  for(let i=0;i<kids.length;i++){
+    const d = kids[i];
+    d.style.opacity='0';
+    d.style.transition='opacity 0.5s ease';
+    setTimeout(()=>{ d.style.opacity='1'; }, 1600 + i*200);
+  }
+  // Set group visible only after individual diyas are set to opacity 0
+  setTimeout(()=>{ grp.style.opacity='1'; }, 50);
+  // Wait until ALL diyas have fully faded in before starting flame animation
+  const allDone = 1600 + (kids.length * 200) + 600;
+  setTimeout(()=>{ initFlames(); startFlames(); }, allDone);
+}
+// ===== MINI DIYA ROW (Canvas-free, pure SVG inline) =====
+function buildMiniDiyaRow(containerId, count){
+  const wrap = document.getElementById(containerId);
+  if(!wrap) return;
+  wrap.innerHTML='';
+  for(let i=0;i<count;i++){
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','-14 -26 28 36');
+    svg.setAttribute('width','28'); svg.setAttribute('height','36');
+    svg.style.overflow='visible';
+    svg.innerHTML=`
+      <defs>
+        <radialGradient id="mdg${containerId}${i}" cx="50%" cy="80%" r="60%">
+          <stop offset="0%" stop-color="#e8a840"/>
+          <stop offset="100%" stop-color="#8a5000"/>
+        </radialGradient>
+        <linearGradient id="mfg${containerId}${i}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.9"/>
+          <stop offset="30%"  stop-color="#ffe060"/>
+          <stop offset="70%"  stop-color="#ff7800"/>
+          <stop offset="100%" stop-color="#cc2800" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- glow -->
+      <ellipse cx="0" cy="-4" rx="9" ry="9" fill="rgba(255,170,20,0.18)"/>
+      <!-- diya body -->
+      <ellipse cx="0" cy="8"  rx="13" ry="5" fill="url(#mdg${containerId}${i})"/>
+      <ellipse cx="0" cy="5"  rx="7"  ry="3" fill="rgba(200,130,30,0.65)"/>
+      <!-- flame group — transform-origin at wick tip (0,0) -->
+      <g class="mini-flame-g" style="transform-origin:0px 0px">
+        <ellipse cx="0" cy="-4" rx="6" ry="6" fill="rgba(255,160,20,0.2)"/>
+        <path d="M0,0 C-4,-7 -2,-16 0,-19 C2,-16 4,-7 0,0 Z" fill="url(#mfg${containerId}${i})"/>
+        <path d="M0,0 C-1.5,-5 -0.8,-10 0,-12 C0.8,-10 1.5,-5 0,0 Z" fill="rgba(255,255,200,0.85)"/>
+      </g>`;
+    wrap.appendChild(svg);
+  }
+}
+
+// ===== INTRO → SITE =====
+let entered = false;
+function enterSite(){
+  if(entered) return;
+  entered = true;
+  document.body.style.overflow = 'auto';
+   document.body.style.webkitOverflowScrolling = 'touch';
+  const flash = document.getElementById('gold-flash');
+  flash.classList.add('flash');
+  setTimeout(()=>{ flash.style.transition='opacity 0.8s'; flash.style.opacity='0'; },300);
+  setTimeout(()=>{ flash.style.display='none'; },1100);
+  setTimeout(()=>{
+    document.getElementById('intro-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    
+    spawnPetals();
+    initReveal();
+    // Build mini diya rows   
+    buildMiniDiyaRow('rsvpDiyaRow',5);
+    buildMiniDiyaRow('footDiyaRow',7);
+    // Re-init flames to include mini rows
+    flameTargets = [];
+    initFlames();
+    startFlames();
+  }, 400);
+}
+
+// ===== PETALS =====
+function spawnPetals(){
+  const wrap = document.getElementById('petalsWrap');
+  const p = ['🌸','🌺','🪷','✿','❀','🌻','🌹'];
+  for(let i=0;i<14;i++){
+    const el = document.createElement('div');
+    el.className = 'petal';
+    el.textContent = p[i%p.length];
+    el.style.left = (Math.random()*100)+'%';
+    el.style.top  = '-20px';
+    el.style.fontSize = (10+Math.random()*10)+'px';
+    el.style.animationDuration = (4+Math.random()*5)+'s';
+    el.style.animationDelay   = (Math.random()*6)+'s';
+    wrap.appendChild(el);
+  }
+}
+
+
+// ===== SCROLL REVEAL =====
+function initReveal(){
+  const obs = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+// ===== MODALS =====
+// Backdrop element for click-outside-to-close (doesn't darken the page)
+let _backdrop = null;
+function _ensureBackdrop(){
+  if(!_backdrop){
+    _backdrop = document.createElement('div');
+    _backdrop.style.cssText='position:fixed;inset:0;z-index:10004;background:transparent;';
+    _backdrop.addEventListener('click', ()=>{ document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open')); _backdrop.remove(); _backdrop=null; });
+  }
+}
+function openM(id){
+  if(id==='mAdmin'){
+    document.getElementById('aLogin').style.display='block';
+    document.getElementById('aData').classList.remove('show');
+    document.getElementById('aPwd').value='';
+    document.getElementById('aErr').style.display='none';
+  }
+  if(id==='mTextEditor') teOpen();
+  // Close any other open overlay first
+  document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+  document.getElementById(id).classList.add('open');
+  // Insert backdrop behind the panel
+  _ensureBackdrop();
+  document.body.appendChild(_backdrop);
+}
+function closeM(id){
+  document.getElementById(id).classList.remove('open');
+  if(_backdrop){ _backdrop.remove(); _backdrop=null; }
+}
+// Remove old click-outside handler — replaced by backdrop above
+
+// ===== THEME =====
+function setTheme(cls,name,btn){
+  document.body.className=cls;
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  localStorage.setItem('wTheme',cls);
+  closeM('mTheme');
+}
+
+// ===== EDIT =====
+function fillEdit(){
+  document.getElementById('eBride').value=wd.bride;
+  document.getElementById('eGroom').value=wd.groom;
+  document.getElementById('eDate').value=wd.date;
+  document.getElementById('eCity').value=wd.city;
+  document.getElementById('eVenue').value=wd.venue;
+  document.getElementById('eAddr').value=wd.addr;
+  document.getElementById('eMap').value=wd.mapLink;
+  document.getElementById('eEmbed').value=wd.embedLink;
+  // Show the currently stored datetime (strip timezone offset for input)
+  const dtStr = weddingDT.toISOString().slice(0,16);
+  document.getElementById('eWeddingDT').value=dtStr;
+  document.getElementById('eEv1').value=wd.ev1;
+  document.getElementById('eEv2').value=wd.ev2;
+  document.getElementById('eEv3').value=wd.ev3;
+  document.getElementById('eEv4').value=wd.ev4;
+  if(document.getElementById('eEv5')) document.getElementById('eEv5').value=wd.ev5||'';
+  if(document.getElementById('eEv6')) document.getElementById('eEv6').value=wd.ev6||'';
+  if(document.getElementById('eEv7')) document.getElementById('eEv7').value=wd.ev7||'';
+  document.getElementById('eSheet').value=wd.sheetUrl;
+}
+
+
+
+function applyWdToDOM(){
+  const fmt = s => (s || '').replace(/\|/g, '<br>');
+  const sel = (s, fn) => { const el = document.querySelector(s); if(el) fn(el); };
+  const id = (s, fn) => { const el = document.getElementById(s); if(el) fn(el); };
+
+  id('h1',          el => el.innerHTML = buildLineSpans(fmt(wd.bride)));
+   id('h2',          el => el.innerHTML = buildLineSpans(fmt(wd.groom)));
+   id('hDate',       el => el.innerHTML = buildLineSpans(fmt(wd.date)));
+   id('venueName',   el => el.innerHTML = buildLineSpans(fmt(wd.venue)));
+   id('venueAddress',el => el.innerHTML = buildLineSpans(fmt(wd.addr)));
+  id('mapsBtn',     el => el.href = wd.mapLink);
+  id('mapFrame',    el => el.src = wd.embedLink);
+
+  ['ev1','ev2','ev3','ev4','ev5','ev6','ev7'].forEach(k => {
+    id(k, el => el.innerHTML = buildLineSpans(fmt(wd[k])));
+  });
+
+  id('footerNames', el => el.innerHTML = buildLineSpans(fmt(wd.bride)) + ' & ' + buildLineSpans(fmt(wd.groom)));
+   id('introNames',  el => el.innerHTML = buildLineSpans(fmt(wd.bride)) + ' <span class="i-amp">&</span> ' + buildLineSpans(fmt(wd.groom)));
+   id('introDate',   el => el.innerHTML = buildLineSpans(fmt(wd.date) + ' · ' + fmt(wd.venue) + ', ' + fmt(wd.city)));
+
+  sel('.intro-tagline', el => el.innerHTML = buildLineSpans(fmt(wd.introTagline)));
+  sel('.intro-tap',     el => { 
+    const t = el.childNodes[0]; 
+    const label = wd.tapBtn.replace(/\|/g, ' ');
+    if(t && t.nodeType === 3) t.nodeValue = label; 
+    else if(el.childNodes[0]) el.childNodes[0].nodeValue = label; 
+  });
+  sel('.hero-tagline',  el => el.innerHTML = buildLineSpans(fmt(wd.heroTagline)));
+  sel('.amp-line',      el => el.innerHTML = buildLineSpans(fmt(wd.weds)));
+  id('secLblEvents',    el => el.innerHTML = buildLineSpans(fmt(wd.evLabel)));
+  id('secTitEvents',    el => el.innerHTML = buildLineSpans(fmt(wd.evTitle)));
+
+  const evNameEls = document.querySelectorAll('.event-name');
+  ['ev1name','ev2name','ev3name','ev4name','ev5name','ev6name','ev7name'].forEach((k, i) => {
+    if(evNameEls[i] && wd[k]) evNameEls[i].innerHTML = fmt(wd[k]);
+  });
+
+  id('secLblVenue',     el => el.innerHTML = buildLineSpans(fmt(wd.venueLabel)));
+   id('secTitVenue',     el => el.innerHTML = buildLineSpans(fmt(wd.venueTitle)));
+   id('secLblRsvp',      el => el.innerHTML = buildLineSpans(fmt(wd.rsvpLabel)));
+   id('secTitRsvp',      el => el.innerHTML = buildLineSpans(fmt(wd.rsvpTitle)));
+   id('rsvpBtn',         el => el.innerHTML = buildLineSpans(fmt(wd.rsvpBtn)));
+   sel('.footer-sub',    el => el.innerHTML = buildLineSpans(fmt(wd.footerSub)));
+   sel('.footer-venue',  el => el.innerHTML = buildLineSpans(fmt(wd.footerVenue)));
+}
+
+
+
+function loadSavedData(){
+  const saved=localStorage.getItem('wData');
+  if(saved){ try{ Object.assign(wd,JSON.parse(saved)); }catch(e){} }
+  weddingDT = new Date('2026-06-18T07:30:00+05:30');
+  const savedDT=localStorage.getItem('wDT');
+   if(savedDT) {
+    // iPhone Fix: If seconds are missing (length is 16), add ":00"
+    let safeDT = savedDT.length === 16 ? savedDT + ':00' : savedDT;
+    // Replace dashes with slashes for strict iOS versions, remove 'T'
+    safeDT = safeDT.replace(/-/g, '/').replace('T', ' ');
+    weddingDT = new Date(safeDT + ' +0530');
+   }
+  
+  // Ultimate Fallback: If it's STILL broken, use the hardcoded date
+   if (isNaN(weddingDT.getTime())) {
+     weddingDT = new Date('2026/06/18 07:30:00 +0530');
+   }
+  try{ fsData=JSON.parse(localStorage.getItem('wFontSpacing')||'{}'); }catch(e){ fsData={}; }
+  applyWdToDOM();
+  fsApplyAll();
+  const savedTheme=localStorage.getItem('wTheme');
+  if(savedTheme){ document.body.className=savedTheme; document.querySelectorAll('.tbtn').forEach(b=>{ if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+savedTheme+"'")) b.classList.add('on'); else b.classList.remove('on'); }); }
+}
+
+// ===== TEXT EDITOR =====
+// 2. Updated teOpen (Loads raw text with | into editor)
+function teOpen(){
+  const v = (id, key) => { if(document.getElementById(id)) document.getElementById(id).value = wd[key] || ''; };
+  v('te-bride', 'bride'); v('te-groom', 'groom'); v('te-date', 'date'); v('te-city', 'city');
+  v('te-introTagline', 'introTagline'); v('te-tapBtn', 'tapBtn'); v('te-heroTagline', 'heroTagline');
+  v('te-weds', 'weds'); v('te-cdLabel', 'cdLabel'); v('te-cdTitle', 'cdTitle');
+  v('te-evLabel', 'evLabel'); v('te-evTitle', 'evTitle');
+  ['ev1name','ev2name','ev3name','ev4name','ev5name','ev6name','ev7name'].forEach(k => v('te-'+k, k));
+  ['ev1','ev2','ev3','ev4','ev5','ev6','ev7'].forEach(k => v('te-'+k, k));
+  v('te-venueLabel', 'venueLabel'); v('te-venueTitle', 'venueTitle');
+  v('te-venueName', 'venue'); v('te-venueAddr', 'addr'); 
+  v('te-rsvpLabel', 'rsvpLabel'); v('te-rsvpTitle', 'rsvpTitle');
+  v('te-rsvpBtn', 'rsvpBtn'); v('te-footerSub', 'footerSub'); v('te-footerVenue', 'footerVenue');
+}
+
+// 3. Updated teLive (Renders breaks live while typing)
+function teLive(){
+  const fmt = s => (s || '').replace(/\|/g, '<br>');
+  const v = id => document.getElementById(id) ? document.getElementById(id).value : '';
+
+  const bride = v('te-bride') || wd.bride;
+  const groom = v('te-groom') || wd.groom;
+
+  if(document.getElementById('h1')) document.getElementById('h1').innerHTML = fmt(bride);
+  if(document.getElementById('h2')) document.getElementById('h2').innerHTML = fmt(groom);
+  if(document.getElementById('hDate')) document.getElementById('hDate').innerHTML = buildLineSpans(fmt(v('te-date') || wd.date));
+  if(document.getElementById('footerNames')) document.getElementById('footerNames').innerHTML = fmt(bride) + ' & ' + fmt(groom);
+  if(document.getElementById('introNames')) document.getElementById('introNames').innerHTML = fmt(bride) + ' <span class="i-amp">&</span> ' + fmt(groom);
+  if(document.getElementById('introDate')) document.getElementById('introDate').innerHTML = fmt((v('te-date')||wd.date) + ' · ' + (v('te-venueName')||wd.venue) + ', ' + (v('te-city')||wd.city));
+  if(document.querySelector('.intro-tagline')) document.querySelector('.intro-tagline').innerHTML = buildLineSpans(fmt(v('te-introTagline')));
+  if(document.querySelector('.intro-tap')){
+    const t = document.querySelector('.intro-tap');
+    if(t.childNodes[0]) t.childNodes[0].nodeValue = (v('te-tapBtn')||'Tap to Open').replace(/\|/g, ' '); 
+  }
+  if(document.querySelector('.hero-tagline')) document.querySelector('.hero-tagline').innerHTML = buildLineSpans(fmt(v('te-heroTagline')));
+  if(document.querySelector('.amp-line')) document.querySelector('.amp-line').innerHTML = buildLineSpans(fmt(v('te-weds') || '— weds —'));
+  if(document.getElementById('secLblEvents')) document.getElementById('secLblEvents').innerHTML = buildLineSpans(fmt(v('te-evLabel')));
+  if(document.getElementById('secTitEvents')) document.getElementById('secTitEvents').innerHTML = buildLineSpans(fmt(v('te-evTitle')));
+  const evNames = document.querySelectorAll('.event-name');
+  ['te-ev1name','te-ev2name','te-ev3name','te-ev4name','te-ev5name','te-ev6name','te-ev7name'].forEach((id,i)=>{ if(evNames[i]) evNames[i].innerHTML = fmt(v(id)); });
+  ['ev1','ev2','ev3','ev4','ev5','ev6','ev7'].forEach(k=>{ const el = document.getElementById(k); if(el) el.innerHTML = fmt(v('te-'+k)); });
+  if(document.getElementById('secLblVenue')) document.getElementById('secLblVenue').innerHTML = buildLineSpans(fmt(v('te-venueLabel')));
+  if(document.getElementById('secTitVenue')) document.getElementById('secTitVenue').innerHTML = buildLineSpans(fmt(v('te-venueTitle')));
+  if(document.getElementById('venueName')) document.getElementById('venueName').innerHTML = buildLineSpans(fmt(v('te-venueName')));
+  if(document.getElementById('venueAddress')) document.getElementById('venueAddress').innerHTML = buildLineSpans(fmt(v('te-venueAddr')));
+  if(document.getElementById('secLblRsvp')) document.getElementById('secLblRsvp').innerHTML = buildLineSpans(fmt(v('te-rsvpLabel')));
+  if(document.getElementById('secTitRsvp')) document.getElementById('secTitRsvp').innerHTML = buildLineSpans(fmt(v('te-rsvpTitle')));
+  if(document.getElementById('rsvpBtn')) document.getElementById('rsvpBtn').innerHTML = buildLineSpans(fmt(v('te-rsvpBtn') || 'Send RSVP ✦'));
+  if(document.querySelector('.footer-sub')) document.querySelector('.footer-sub').innerHTML = buildLineSpans(fmt(v('te-footerSub')));
+  if(document.querySelector('.footer-venue')) document.querySelector('.footer-venue').innerHTML = buildLineSpans(fmt(v('te-footerVenue')));
+}
+
+// 4. Updated teSave (Commits custom breaks to browser memory)
+function teSave(){
+  const v = id => document.getElementById(id) ? document.getElementById(id).value : '';
+  wd.bride = v('te-bride'); wd.groom = v('te-groom'); wd.date = v('te-date'); wd.city = v('te-city');
+  wd.introTagline = v('te-introTagline'); wd.tapBtn = v('te-tapBtn'); wd.heroTagline = v('te-heroTagline');
+  wd.weds = v('te-weds'); wd.cdLabel = v('te-cdLabel'); wd.cdTitle = v('te-cdTitle');
+  wd.evLabel = v('te-evLabel'); wd.evTitle = v('te-evTitle');
+  ['ev1name','ev2name','ev3name','ev4name','ev5name','ev6name','ev7name'].forEach(k => { wd[k] = v('te-'+k); });
+  ['ev1','ev2','ev3','ev4','ev5','ev6','ev7'].forEach(k => { wd[k] = v('te-'+k); });
+  wd.venueLabel = v('te-venueLabel'); wd.venueTitle = v('te-venueTitle');
+  wd.venue = v('te-venueName'); wd.addr = v('te-venueAddr');
+  wd.rsvpLabel = v('te-rsvpLabel'); wd.rsvpTitle = v('te-rsvpTitle');
+  wd.rsvpBtn = v('te-rsvpBtn'); wd.footerSub = v('te-footerSub'); wd.footerVenue = v('te-footerVenue');
+  localStorage.setItem('wData', JSON.stringify(wd));
+  const btn = document.querySelector('#mTextEditor .save-btn');
+  const orig = btn.textContent; btn.textContent = '✓ Saved!'; 
+  btn.style.background = 'linear-gradient(135deg,#1a4a1a,#2a8a2a)';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+}
+
+function teReset(){
+  if(!confirm('Reset all text to defaults?')) return;
+  localStorage.removeItem('wData');
+  location.reload();
+}
+
+// ===== LINE SPAN BUILDER =====
+// Splits text on <br> tags and wraps each line in a tl-N span
+// so per-line font controls can target them individually
+function buildLineSpans(html){
+  const parts = html.split(/<br\s*\/?>/i);
+  if(parts.length <= 1) return html; // no break, no wrapping needed
+  return parts.map((p,i) => `<span class="tl-${i}" style="">${p}</span>`).join('<br>');
+}
+
+// ===== FONT & SPACING =====
+const FONTS = [
+  { label:'— Theme Default —',          value:'' },
+  { label:'Great Vibes (Script)',        value:"'Great Vibes',cursive" },
+  { label:'Cormorant Garamond (Serif)',  value:"'Cormorant Garamond',serif" },
+  { label:'Cinzel (Classic Caps)',       value:"'Cinzel',serif" },
+  { label:'Georgia (Serif)',             value:'Georgia,serif' },
+  { label:'Arial (Sans-serif)',          value:'Arial,sans-serif' },
+  { label:"Times New Roman",            value:"'Times New Roman',serif" },
+];
+
+const FS_BLOCKS = [
+  {
+    id:'hero-names', label:'✦ Hero — Names (Bride / Weds / Groom)', type:'multiline',
+    lines:[
+      { id:'hero-bride', label:'Bride Name (upper)',  sel:'#h1' },
+      { id:'hero-weds',  label:'— Weds — (middle)',   sel:'.amp-line' },
+      { id:'hero-groom', label:'Groom Name (lower)',  sel:'#h2' },
+    ],
+  },
+  { id:'hero-tagline', label:'Hero — Tagline',         type:'single', sel:'.hero-tagline' },
+  { id:'hero-date',    label:'Hero — Date Tag',         type:'single', sel:'#hDate' },
+  {
+    id:'intro-block', label:'✦ Intro — Names Block', type:'multiline',
+    lines:[
+      { id:'intro-tag',  label:'Intro Tagline (upper)', sel:'.intro-tagline' },
+      { id:'intro-name', label:'Intro Names (middle)',   sel:'.intro-names' },
+      { id:'intro-dt',   label:'Intro Date (lower)',     sel:'.intro-date' },
+    ],
+  },
+  {
+    id:'intro-tagline-lines', label:'✦ Intro Tagline — Line 1 / Line 2', type:'multiline',
+    lines:[
+      { id:'itl-0', label:'Line 1 (e.g. "You are invited…")', sel:'#introTagline .tl-0' },
+      { id:'itl-1', label:'Line 2 (e.g. "Wedding")',           sel:'#introTagline .tl-1' },
+    ],
+  },
+  {
+    id:'intro-tagline-lines', label:'✦ Intro Tagline — Per Line', type:'multiline',
+    lines:[
+      { id:'itl-0', label:'Line 1 ("You are invited…")', sel:'#introTagline .tl-0' },
+      { id:'itl-1', label:'Line 2 ("Wedding")',           sel:'#introTagline .tl-1' },
+    ],
+  },
+  { id:'intro-tap',     label:'Intro — Tap Button',      type:'single', sel:'.intro-tap' },
+  { id:'cd-label',      label:'Countdown — Label',        type:'single', sel:'.cd-label' },
+  { id:'cd-title',      label:'Countdown — Title',        type:'single', sel:'.cd-title' },
+  { id:'cd-unit-lbl',   label:'Countdown — Unit Labels (Days/Hours/…)', type:'single', sel:'.cd-unit-label' },
+  {
+    id:'sec-events', label:'✦ Festivities — Section Header', type:'multiline',
+    lines:[
+      { id:'ev-lbl', label:'Section Label (upper)', sel:'#secLblEvents' },
+      { id:'ev-tit', label:'Section Title (lower)', sel:'#secTitEvents' },
+    ],
+  },
+  { id:'event-name',    label:'Events — Event Name',      type:'single', sel:'.event-name' },
+  { id:'event-detail',  label:'Events — Event Details',   type:'single', sel:'.event-detail' },
+  { id:'event-dresscode', label:'Events — Dress Code Badge', type:'single', sel:'.dc-badge' },
+   { id:'reveal-teaser', label:'Events — Reveal Theme Badge (Teaser)', type:'single', sel:'.reveal-badge' },
+  { id:'reception-emojis', label:'Events — Reception Emojis (Naked)', type:'single', sel:'.individual-emoji' },
+  {
+    id:'sec-venue', label:'✦ Venue — Section Header', type:'multiline',
+    lines:[
+      { id:'ven-lbl', label:'Section Label (upper)', sel:'#secLblVenue' },
+      { id:'ven-tit', label:'Section Title (lower)', sel:'#secTitVenue' },
+    ],
+  },
+  { id:'venue-name',    label:'Venue — Venue Name',       type:'single', sel:'#venueName' },
+  { id:'venue-addr',    label:'Venue — Address',          type:'single', sel:'#venueAddress' },
+  {
+    id:'sec-rsvp', label:'✦ RSVP — Section Header', type:'multiline',
+    lines:[
+      { id:'rsvp-lbl', label:'Section Label (upper)', sel:'#secLblRsvp' },
+      { id:'rsvp-tit', label:'Section Title (lower)', sel:'#secTitRsvp' },
+    ],
+  },
+  { id:'rsvp-field-lbl', label:'RSVP — Field Labels',     type:'single', sel:'.field label' },
+  { id:'rsvp-btn',       label:'RSVP — Button',           type:'single', sel:'#rsvpBtn' },
+  {
+    id:'footer-block', label:'✦ Footer — Names Block', type:'multiline',
+    lines:[
+      { id:'foot-names', label:'Footer Names (upper)',     sel:'#footerNames' },
+      { id:'foot-sub',   label:'Footer Subtitle (middle)', sel:'.footer-sub' },
+      { id:'foot-venue', label:'Footer Venue Line (lower)',sel:'.footer-venue' },
+    ],
+  },
+];
+
+let fsData = {};
+
+function fsGetBlock(id){ return FS_BLOCKS.find(b=>b.id===id); }
+
+function fsLoad(){
+  try{ fsData=JSON.parse(localStorage.getItem('wFontSpacing')||'{}'); }catch(e){ fsData={}; }
+  // Populate the block selector (only once)
+  const sel=document.getElementById('fsBlockSel');
+  if(sel && sel.options.length===1){
+    FS_BLOCKS.forEach(b=>{
+      const o=document.createElement('option');
+      o.value=b.id; o.textContent=b.label; sel.appendChild(o);
+    });
+  }
+  fsApplyAll();
+}
+
+function fsApplyAll(){
+  FS_BLOCKS.forEach(b=>{
+    if(b.type==='single'){
+      const bd=fsData[b.id];
+      if(!bd) return;
+      // Apply whole-block styles (font, size, spacing)
+      fsApplyStyle(b.sel,bd);
+      // Apply per-span (tl-N) styles if they exist in saved data
+      const parent=document.querySelector(b.sel);
+      if(parent){
+        let i=0; let span;
+        while((span=parent.querySelector('.tl-'+i))){
+          const lineId='tl-'+i;
+          if(bd[lineId]) fsApplyStyle(null,bd[lineId],span);
+          i++;
+        }
+        // Apply gap
+        if(bd.tlGap!==undefined){
+          let j=1; let el;
+          while((el=parent.querySelector('.tl-'+j))){ el.style.marginTop=bd.tlGap+'px'; j++; }
+        }
+      }
+    } else {
+      const bd=fsData[b.id]||{};
+      b.lines.forEach(l=>{ const d=bd[l.id]; if(d) fsApplyStyle(l.sel,d); });
+      if(bd.groupGap!==undefined) fsApplyGroupGap(b,bd.groupGap);
+    }
+  });
+}
+
+function fsApplyStyle(sel,d,directEl){
+  const els = directEl ? [directEl] : Array.from(document.querySelectorAll(sel));
+  els.forEach(el=>{
+    el.style.fontFamily   = d.fontFamily!==undefined   ? d.fontFamily   : '';
+    el.style.fontSize     = d.fontSize!==undefined     ? d.fontSize+'px': '';
+    el.style.letterSpacing= d.letterSpacing!==undefined? d.letterSpacing+'px':'';
+    el.style.lineHeight   = d.lineHeight!==undefined   ? d.lineHeight   : '';
+  });
+}
+
+function fsApplyGroupGap(block,gap){
+  // Apply margin-top to every line except the first one
+  block.lines.slice(1).forEach(l=>{
+    document.querySelectorAll(l.sel).forEach(el=>{ el.style.marginTop=gap+'px'; });
+  });
+}
+
+function fsGetSpans(block){
+  // Returns array of {index, el} for tl-N spans inside a single block's element
+  const parent=document.querySelector(block.sel);
+  if(!parent) return [];
+  const spans=[];
+  let i=0;
+  while(true){
+    const el=parent.querySelector('.tl-'+i);
+    if(!el) break;
+    spans.push({index:i, el});
+    i++;
+  }
+  return spans;
+}
+
+function fsRenderBlock(){
+  const selEl=document.getElementById('fsBlockSel');
+  const ctrlEl=document.getElementById('fsControls');
+  if(!selEl||!ctrlEl) return;
+  const blockId=selEl.value;
+  if(!blockId){ ctrlEl.innerHTML='<div class="fs-empty-hint">Select a block above to edit its typography.</div>'; return; }
+  const block=fsGetBlock(blockId);
+  if(!block){ ctrlEl.innerHTML=''; return; }
+
+  if(block.type==='single'){
+    const spans=fsGetSpans(block);
+    if(spans.length>1){
+      // Has tl-N spans — render per-line controls
+      const bd=fsData[blockId]||{};
+      let html='<div style="font-family:\'Cinzel\',serif;font-size:9px;letter-spacing:2px;color:var(--gold-dim);margin-bottom:12px;padding:6px 8px;background:rgba(245,208,80,0.05);border-radius:3px;">This block has '+spans.length+' lines (split by | in Edit Text). Controls below apply per line.</div>';
+      spans.forEach(({index})=>{
+        const lineId='tl-'+index;
+        const ctrlKey=blockId+'.'+lineId;
+        const d=(bd[lineId])||{};
+        html+=`<div class="fs-line-header">Line ${index+1}</div>${fsControlsHTML(ctrlKey,d)}`;
+      });
+      // Gap between lines
+      const gap=bd.tlGap!==undefined?bd.tlGap:0;
+      html+=`<div class="fs-group-gap-box">
+        <div class="fs-group-gap-title">↕ Gap between lines</div>
+        <div class="fs-ctrl-row">
+          <span class="fs-ctrl-label">Gap</span>
+          <input class="fs-ctrl-slider" type="range" min="-20" max="60" step="1" value="${gap}"
+            oninput="fsLive('${blockId}.tlGap',this.value)">
+          <span class="fs-ctrl-val" id="fsvg-${blockId}">${gap}px</span>
+        </div>
+      </div>`;
+      html+=`<button class="fs-reset-block" onclick="fsResetBlock('${blockId}')">↺ Reset this block</button>`;
+      ctrlEl.innerHTML=html;
+      return;
+    }
+    const d=fsData[blockId]||{};
+    ctrlEl.innerHTML=fsControlsHTML(blockId,d)+
+      `<button class="fs-reset-block" onclick="fsResetBlock('${blockId}')">↺ Reset this block</button>`;
+  } else {
+    const bd=fsData[blockId]||{};
+    let html='';
+    block.lines.forEach(l=>{
+      const ctrlKey=blockId+'.'+l.id;
+      const d=bd[l.id]||{};
+      html+=`<div class="fs-line-header">${l.label}</div>${fsControlsHTML(ctrlKey,d)}`;
+    });
+    // Group gap control
+    const gap=bd.groupGap!==undefined?bd.groupGap:0;
+    html+=`<div class="fs-group-gap-box">
+      <div class="fs-group-gap-title">↕ Line-to-Line Gap (spacing between all lines in this block)</div>
+      <div class="fs-ctrl-row">
+        <span class="fs-ctrl-label">Gap</span>
+        <input class="fs-ctrl-slider" type="range" min="-30" max="80" step="1" value="${gap}"
+          oninput="fsLive('${blockId}.groupGap',this.value)">
+        <span class="fs-ctrl-val" id="fsvg-${blockId}">${gap}px</span>
+      </div>
+    </div>`;
+    html+=`<button class="fs-reset-block" onclick="fsResetBlock('${blockId}')">↺ Reset this block</button>`;
+    ctrlEl.innerHTML=html;
+  }
+}
+
+// ctrlKey: "blockId" for single, "blockId.lineId" for multiline lines
+function fsControlsHTML(ctrlKey,d){
+  const safe=ctrlKey.replace(/\./g,'-');
+  const ff=d.fontFamily!==undefined?d.fontFamily:'';
+  const fz=d.fontSize!==undefined?d.fontSize:16;
+  const ls=d.letterSpacing!==undefined?d.letterSpacing:0;
+  const lh=d.lineHeight!==undefined?d.lineHeight:1.2;
+  const fontOpts=FONTS.map(f=>`<option value="${f.value}"${ff===f.value?' selected':''}>${f.label}</option>`).join('');
+  return `
+  <div class="fs-ctrl-row">
+    <span class="fs-ctrl-label">Font</span>
+    <select class="fs-font-select" style="font-family:${ff||'inherit'}"
+      onchange="fsLive('${ctrlKey}.fontFamily',this.value);this.style.fontFamily=this.value||'inherit'">
+      ${fontOpts}
+    </select>
+  </div>
+  <div class="fs-ctrl-row">
+    <span class="fs-ctrl-label">Font Size</span>
+    <input class="fs-ctrl-slider" type="range" min="8" max="120" step="1" value="${fz}"
+      oninput="fsLive('${ctrlKey}.fontSize',this.value)">
+    <span class="fs-ctrl-val" id="fsvz-${safe}">${d.fontSize!==undefined?fz+'px':'auto'}</span>
+  </div>
+  <div class="fs-ctrl-row">
+    <span class="fs-ctrl-label">Letter Spacing</span>
+    <input class="fs-ctrl-slider" type="range" min="-2" max="20" step="0.5" value="${ls}"
+      oninput="fsLive('${ctrlKey}.letterSpacing',this.value)">
+    <span class="fs-ctrl-val" id="fsvls-${safe}">${ls}px</span>
+  </div>
+  <div class="fs-ctrl-row">
+    <span class="fs-ctrl-label">Line Height</span>
+    <input class="fs-ctrl-slider" type="range" min="0.8" max="3" step="0.1" value="${lh}"
+      oninput="fsLive('${ctrlKey}.lineHeight',this.value)">
+    <span class="fs-ctrl-val" id="fsvlh-${safe}">${lh}</span>
+  </div>`;
+}
+
+// fullKey: "blockId.prop" | "blockId.lineId.prop" | "blockId.groupGap"
+function fsLive(fullKey,val){
+  const parts=fullKey.split('.');
+  const prop=parts[parts.length-1];
+  const ctrlKey=parts.slice(0,-1).join('.');
+  const safe=ctrlKey.replace(/\./g,'-');
+
+  if(prop==='groupGap'){
+    const blockId=ctrlKey;
+    if(!fsData[blockId]) fsData[blockId]={};
+    fsData[blockId].groupGap=parseFloat(val);
+    const block=fsGetBlock(blockId);
+    if(block) fsApplyGroupGap(block,parseFloat(val));
+    const vEl=document.getElementById('fsvg-'+blockId);
+    if(vEl) vEl.textContent=val+'px';
+    return;
+  }
+
+  const blockId=parts[0];
+  const block=fsGetBlock(blockId);
+  if(!block) return;
+  const strVal=(prop==='fontFamily'||prop==='lineHeight')?val:parseFloat(val);
+
+  if(block.type==='single'){
+    if(!fsData[blockId]) fsData[blockId]={};
+    // Check if this is a tl-N line key (e.g. blockId.tl-0.fontSize)
+    if(parts.length===3 && parts[1].startsWith('tl-')){
+      const lineId=parts[1];
+      if(!fsData[blockId][lineId]) fsData[blockId][lineId]={};
+      fsData[blockId][lineId][prop]=strVal;
+      // Apply to the specific span
+      const parent=document.querySelector(block.sel);
+      const spanIdx=parseInt(lineId.replace('tl-',''));
+      const span=parent ? parent.querySelector('.tl-'+spanIdx) : null;
+      if(span) fsApplyStyle('.tl-'+spanIdx, fsData[blockId][lineId], span);
+    } else if(prop==='tlGap'){
+      fsData[blockId].tlGap=parseFloat(val);
+      // Apply gap as margin-top on tl-1, tl-2, etc.
+      const parent=document.querySelector(block.sel);
+      if(parent){
+        let i=1; let el;
+        while((el=parent.querySelector('.tl-'+i))){ el.style.marginTop=val+'px'; i++; }
+      }
+      const vEl=document.getElementById('fsvg-'+blockId);
+      if(vEl) vEl.textContent=val+'px';
+      return;
+    } else {
+      fsData[blockId][prop]=strVal;
+      fsApplyStyle(block.sel,fsData[blockId]);
+    }
+  } else {
+    const lineId=parts[1];
+    if(!fsData[blockId]) fsData[blockId]={};
+    if(!fsData[blockId][lineId]) fsData[blockId][lineId]={};
+    fsData[blockId][lineId][prop]=strVal;
+    // Check if it's a tl-N span (from | split) inside a multiline block
+    if(lineId.startsWith('tl-')){
+      const spanIdx=parseInt(lineId.replace('tl-',''));
+      // Find the parent element — could be any line's selector
+      block.lines.forEach(l=>{
+        const parent=document.querySelector(l.sel);
+        if(!parent) return;
+        const span=parent.querySelector('.tl-'+spanIdx);
+        if(span) fsApplyStyle(null,fsData[blockId][lineId],span);
+      });
+      // Also try the block's own sel if it has one
+    } else {
+      const line=block.lines.find(l=>l.id===lineId);
+      if(line) fsApplyStyle(line.sel,fsData[blockId][lineId]);
+    }
+    // tlGap for multiline blocks
+    if(prop==='tlGap'){
+      block.lines.forEach(l=>{
+        const parent=document.querySelector(l.sel);
+        if(!parent) return;
+        let i=1; let el;
+        while((el=parent.querySelector('.tl-'+i))){ el.style.marginTop=val+'px'; i++; }
+      });
+    }
+  }
+
+  // Update display value
+  let vId='';
+  if(prop==='fontSize')      vId='fsvz-'+safe;
+  else if(prop==='letterSpacing') vId='fsvls-'+safe;
+  else if(prop==='lineHeight')    vId='fsvlh-'+safe;
+  const vEl=document.getElementById(vId);
+  if(vEl){
+    if(prop==='fontSize'||prop==='letterSpacing') vEl.textContent=val+'px';
+    else vEl.textContent=val;
+  }
+}
+
+function fsSaveAll(){
+  localStorage.setItem('wFontSpacing',JSON.stringify(fsData));
+  const btn=document.querySelector('#te-panel-typo .save-btn');
+  if(btn){const o=btn.textContent;btn.textContent='✓ Saved!';btn.style.background='linear-gradient(135deg,#1a4a1a,#2a8a2a)';setTimeout(()=>{btn.textContent=o;btn.style.background='';},2000);}
+}
+
+function fsResetBlock(blockId){
+  if(!confirm('Reset typography for this block to theme defaults?')) return;
+  delete fsData[blockId];
+  const block=fsGetBlock(blockId);
+  if(block){
+    const clearEl=el=>{ el.style.fontFamily='';el.style.fontSize='';el.style.letterSpacing='';el.style.lineHeight='';el.style.marginTop=''; };
+    if(block.type==='single'){ document.querySelectorAll(block.sel).forEach(clearEl); }
+    else { block.lines.forEach(l=>document.querySelectorAll(l.sel).forEach(clearEl)); }
+  }
+  fsRenderBlock();
+}
+
+function fsResetAll(){
+  if(!confirm('Reset ALL typography settings to theme defaults?')) return;
+  localStorage.removeItem('wFontSpacing');
+  fsData={};
+  const clearEl=el=>{ el.style.fontFamily='';el.style.fontSize='';el.style.letterSpacing='';el.style.lineHeight='';el.style.marginTop=''; };
+  FS_BLOCKS.forEach(b=>{
+    if(b.type==='single') document.querySelectorAll(b.sel).forEach(clearEl);
+    else b.lines.forEach(l=>document.querySelectorAll(l.sel).forEach(clearEl));
+  });
+  document.getElementById('fsBlockSel').value='';
+  document.getElementById('fsControls').innerHTML='<div class="fs-empty-hint">Select a block above to edit its typography.</div>';
+}
+
+function teTab(name,btn){
+  document.querySelectorAll('.te-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.te-tabpanel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('te-panel-'+name).classList.add('active');
+  if(name==='typo') fsRenderBlock();
+}
+
+// Guest counter
+function changeGuests(delta){
+  const input = document.getElementById('rGuests');
+  let val = parseInt(input.value) || 1;
+  val = Math.max(1, Math.min(20, val + delta));
+  input.value = val;
+}
+
+// ===== RSVP =====
+async function submitRSVP(){
+  const name=document.getElementById('rName').value.trim();
+  const guests=document.getElementById('rGuests').value;
+  const attend=document.getElementById('rAttend').value;
+  const errEl=document.getElementById('rsvpErr');
+  if(!name){
+    errEl.textContent='Please enter your name ✦';
+    errEl.style.display='block';
+    setTimeout(()=>errEl.style.display='none',3000);
+    return;
+  }
+  errEl.style.display='none';
+  const btn=document.getElementById('rsvpBtn');
+  btn.textContent='Sending…'; btn.disabled=true;
+  const timestamp = new Date().toLocaleString('en-IN');
+  const arrival = (document.getElementById('rArrival')||{}).value || 'Not specified';
+  const entry={name,guests,attend,time:timestamp,arrival};
+  rsvps.push(entry);
+  localStorage.setItem('wRsvps',JSON.stringify(rsvps));
+  if(wd.sheetUrl){
+    try{ await fetch(wd.sheetUrl
+      +'?name='+encodeURIComponent(name)
+      +'&guests='+encodeURIComponent(guests)
+      +'&attending='+encodeURIComponent(attend)
+      +'&time='+encodeURIComponent(timestamp)
+      +'&arrival='+encodeURIComponent(arrival),
+      {method:'GET',mode:'no-cors'}); }catch(err){}
+  }
+  document.getElementById('rsvpForm').style.display='none';
+  const s=document.getElementById('rsvpSuccess');
+  s.innerHTML=`🎉 Wonderful, ${name}!<br><span style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold-dim);font-style:italic">We can't wait to celebrate with you${guests>1?' and your '+guests+' guests':''}!</span>`;
+  s.classList.add('show');
+}
+
+// ===== ADMIN =====
+function aLogin(){
+  if(document.getElementById('aPwd').value===PASS){
+    document.getElementById('aLogin').style.display='none';
+    loadAdmin(); document.getElementById('aData').classList.add('show');
+  } else { document.getElementById('aErr').style.display='block'; }
+}
+function loadAdmin(){
+  const list=JSON.parse(localStorage.getItem('wRsvps')||'[]');
+  const yes=list.filter(r=>r.attend==='yes').length;
+  document.getElementById('aCount').textContent=yes;
+  document.getElementById('aTotal').textContent=`of ${list.length} total responses`;
+  const tb=document.getElementById('aTbody'); tb.innerHTML='';
+  if(!list.length){ tb.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--gold-dim);font-style:italic">No responses yet</td></tr>'; return; }
+  list.forEach((r,i)=>{ tb.innerHTML+=`<tr><td>${i+1}</td><td>${r.name}</td><td>${r.guests||1} guest${(r.guests||1)>1?'s':''}</td><td class="yes">✓ Yes</td></tr>`; });
+}
+function exportCSV(){
+  const list=JSON.parse(localStorage.getItem('wRsvps')||'[]');
+  if(!list.length){alert('No RSVPs yet');return;}
+  let csv='Name,Guests,Attending,Time\n';
+   list.forEach(r=>{csv+=`"${r.name}","${r.guests||1}","${r.attend}","${r.time}"\n`;});
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='rsvp_list.csv'; a.click();
+}
+
+// ===== WHATSAPP =====
+function shareWA(){
+  const text=`🌸 You're warmly invited!\n\n✨ ${wd.bride} & ${wd.groom} ✨\n📅 ${wd.date}\n📍 ${wd.venue}, ${wd.city}\n\n${window.location.href}`;
+  window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(text),'_blank');
+}
+
+// ===== MUSIC ENGINE =====
+let audioCtx=null, masterGain=null, musicOn=false;
+let currentTrack='strings', schedTimer=null, userAudio=null, userAudioSrc=null;
+let userAudioBase64=null, userAudioMime='audio/mpeg';
+let musicVolume=0.35;
+
+const TRACKS = {
+  strings:{
+    name:'Instrumental Strings',
+    gen:(ctx,gain)=>{
+      // Warm string-like melody using sawtooth + filtering
+      const scale=[261.63,293.66,329.63,369.99,392,440,493.88,523.25,587.33,659.26];
+      const phrase=[0,2,4,6,4,2,0,2,4,7,6,4,2,4,0,3,4,6,4,0];
+      const durs=[2.5,2.0,2.5,1.8,2.2,2.0,2.5,2.0,1.8,2.5,2.2,2.0,1.8,2.2,2.8,2.0,1.8,2.2,2.5,3.0];
+      let t=ctx.currentTime+0.5;
+      function sched(){
+        if(!musicOn) return;
+        phrase.forEach((ni,i)=>{
+          const f=scale[ni%scale.length];const d=durs[i%durs.length]*0.80;
+          // Layered: main + octave up (softer)
+          [1,2].forEach((mult,li)=>{
+            const o=ctx.createOscillator();const g=ctx.createGain();
+            const filt=ctx.createBiquadFilter();
+            filt.type='lowpass';filt.frequency.value=1200-li*400;filt.Q.value=2;
+            o.type='sawtooth';o.frequency.value=f*mult;
+            const vol=li===0?0.4:0.18;
+            g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+0.18);
+            g.gain.setValueAtTime(vol,t+d-0.2);g.gain.linearRampToValueAtTime(0,t+d);
+            o.connect(filt);filt.connect(g);g.connect(gain);
+            o.start(t);o.stop(t+d+0.1);
+          });
+          t+=d*0.78;
+        });
+        t+=2.0;
+        if(musicOn) schedTimer=setTimeout(sched,(t-ctx.currentTime-2.5)*1000);
+      }
+      sched();
+    }
+  },
+  yaman:{
+    name:'Raag Yaman',
+    gen:(ctx,gain)=>{
+      const scale=[261.63,293.66,329.63,369.99,392,440,493.88,523.25];
+      const phrase=[0,2,4,5,4,2,0,4,5,7,5,4,2,1,0,5,4,2,4,0];
+      const durs=[2.2,1.8,2.2,1.5,2.0,1.8,2.2,2.0,1.5,2.0,1.8,2.2,1.8,1.5,2.2,2.0,1.8,1.5,2.2,2.5];
+      let t=ctx.currentTime+0.5;
+      const rev=ctx.createConvolver();
+      const rl=ctx.sampleRate*2.5;const rb=ctx.createBuffer(2,rl,ctx.sampleRate);
+      for(let c=0;c<2;c++){const d=rb.getChannelData(c);for(let i=0;i<rl;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/rl,2.5);}
+      rev.buffer=rb;const rg=ctx.createGain();rg.gain.value=0.3;rev.connect(rg);rg.connect(gain);
+      function sched(){
+        if(!musicOn) return;
+        phrase.forEach((ni,i)=>{
+          const f=scale[ni%scale.length];const d=durs[i%durs.length]*0.78;
+          const o=ctx.createOscillator();const g=ctx.createGain();
+          o.type='sine';o.frequency.value=f;
+          g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.85,t+0.1);
+          g.gain.setValueAtTime(0.85,t+d-0.12);g.gain.linearRampToValueAtTime(0,t+d);
+          o.connect(g);g.connect(gain);g.connect(rev);
+          o.start(t);o.stop(t+d+0.05);t+=d*0.82;
+        });
+        t+=1.8;
+        if(musicOn) schedTimer=setTimeout(sched,(t-ctx.currentTime-2)*1000);
+      }
+      sched();
+    }
+  },
+  lofi:{
+    name:'Lo-fi Romantic',
+    gen:(ctx,gain)=>{
+      // Lo-fi: slightly detuned chords with warm filter
+      const chords=[[261.63,329.63,392],[293.66,369.99,440],[246.94,311.13,392],[220,277.18,349.23]];
+      let t=ctx.currentTime+0.5; let ci=0;
+      function sched(){
+        if(!musicOn) return;
+        const chord=chords[ci%chords.length];
+        chord.forEach((f,fi)=>{
+          const o=ctx.createOscillator();const g=ctx.createGain();
+          const filt=ctx.createBiquadFilter();filt.type='lowpass';filt.frequency.value=900;filt.Q.value=1.5;
+          o.type='triangle';o.frequency.value=f*(1+0.004*(Math.random()-0.5));
+          g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.3,t+0.3);
+          g.gain.setValueAtTime(0.3,t+2.8);g.gain.linearRampToValueAtTime(0,t+3.5);
+          o.connect(filt);filt.connect(g);g.connect(gain);
+          o.start(t);o.stop(t+3.6);
+        });
+        t+=3.2;ci++;
+        if(musicOn) schedTimer=setTimeout(sched,(t-ctx.currentTime-1)*1000);
+      }
+      sched();
+    }
+  },
+  tabla:{
+    name:'Ambient Tabla Beats',
+    gen:(ctx,gain)=>{
+      // Gentle rhythmic pulse + ambient drone
+      const droneF=[130.81,196,261.63];
+      droneF.forEach(f=>{
+        const o=ctx.createOscillator();const g=ctx.createGain();
+        const filt=ctx.createBiquadFilter();filt.type='lowpass';filt.frequency.value=600;
+        o.type='sine';o.frequency.value=f;g.gain.value=0.08;
+        o.connect(filt);filt.connect(g);g.connect(gain);o.start();
+      });
+      const pattern=[0,0.5,1,1.5,2,2.5,3,3.5];
+      let t=ctx.currentTime+0.2;
+      function beat(){
+        if(!musicOn) return;
+        pattern.forEach((off,i)=>{
+          const o=ctx.createOscillator();const g=ctx.createGain();
+          const filt=ctx.createBiquadFilter();filt.type='bandpass';filt.frequency.value=120+i*30;filt.Q.value=8;
+          o.type='sine';o.frequency.value=80+i*15;
+          const vol=i===0||i===4?0.4:0.2;
+          g.gain.setValueAtTime(vol,t+off);g.gain.exponentialRampToValueAtTime(0.001,t+off+0.15);
+          o.connect(filt);filt.connect(g);g.connect(gain);
+          o.start(t+off);o.stop(t+off+0.2);
+        });
+        t+=4;
+        if(musicOn) schedTimer=setTimeout(beat,(t-ctx.currentTime-1)*1000);
+      }
+      beat();
+    }
+  },
+  ambient:{
+    name:'Calm Ambient',
+    gen:(ctx,gain)=>{
+      const freqs=[130.81,164.81,196,246.94,261.63];
+      let t=ctx.currentTime+0.3;
+      function pad(){
+        if(!musicOn) return;
+        const f=freqs[Math.floor(Math.random()*freqs.length)];
+        const o=ctx.createOscillator();const g=ctx.createGain();
+        const filt=ctx.createBiquadFilter();filt.type='lowpass';filt.frequency.value=500+Math.random()*400;
+        o.type='sine';o.frequency.value=f;
+        g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.25,t+2);
+        g.gain.setValueAtTime(0.25,t+5);g.gain.linearRampToValueAtTime(0,t+8);
+        o.connect(filt);filt.connect(g);g.connect(gain);
+        o.start(t);o.stop(t+9);
+        t+=3+Math.random()*2;
+        if(musicOn) schedTimer=setTimeout(pad,(t-ctx.currentTime-3)*1000);
+      }
+      pad();
+    }
+  }
+};
+
+function startMusicEngine(){
+  if(musicOn) return;
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  // 🟢 ADD THIS LINE: Forces strict browsers (like Safari/iOS) to wake up the audio
+   if(audioCtx.state === 'suspended') audioCtx.resume();
+  masterGain=audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0,audioCtx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(musicVolume*0.6,audioCtx.currentTime+2);
+  masterGain.connect(audioCtx.destination);
+  if(userAudio && currentTrack==='user'){
+    musicOn=true;
+    updateMusicBtn();
+    userAudio.loop=true;userAudio.volume=musicVolume;
+    userAudio.play().catch(()=>{});
+  } else {
+    const gen=TRACKS[currentTrack]?.gen;
+    musicOn=true;
+    updateMusicBtn();
+    if(gen) gen(audioCtx,masterGain);
+  }
+}
+
+function stopMusicEngine(){
+  musicOn=false;
+  if(schedTimer){clearTimeout(schedTimer);schedTimer=null;}
+  if(masterGain) masterGain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+1);
+  if(userAudio){userAudio.pause();userAudio.currentTime=0;}
+  // Create new context next time to fully stop oscillators
+  setTimeout(()=>{if(!musicOn&&audioCtx){audioCtx.close();audioCtx=null;masterGain=null;}},1500);
+  updateMusicBtn();
+}
+
+function toggleMusic(){
+  if(musicOn) stopMusicEngine();
+  else startMusicEngine();
+}
+
+function updateMusicBtn(){
+  const btn=document.getElementById('musicBtn');
+  const playBtn=document.getElementById('musicPlayBtn');
+  if(musicOn){
+    if(btn){btn.innerHTML='🔊<span class="fb-tip">Stop Music</span>';btn.style.background='linear-gradient(135deg,#205a10,#30aa10)';}
+    if(playBtn){playBtn.textContent='⏹ Stop Music';playBtn.style.background='linear-gradient(135deg,#5a1010,#aa2020)';}
+  } else {
+    if(btn){btn.innerHTML='🎵<span class="fb-tip">Background Music</span>';btn.style.background='linear-gradient(135deg,#1a3a5a,#2a70aa)';}
+    if(playBtn){playBtn.textContent='▶ Play Music';playBtn.style.background='linear-gradient(135deg,#1a3a5a,#2a70aa)';}
+  }
+}
+
+function selectMusicTrack(name,el){
+  const wasOn=musicOn;
+  if(wasOn) stopMusicEngine();
+  currentTrack=name;
+  document.querySelectorAll('.music-track').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('[id^="ts-"]').forEach(s=>s.textContent='');
+  const ts=document.getElementById('ts-'+name);
+  if(ts) ts.textContent='Selected';
+  localStorage.setItem('wMusicTrack',name);
+  if(wasOn) setTimeout(startMusicEngine,600);
+}
+
+function loadUserMusic(input){
+  if(!input.files||!input.files[0]) return;
+  const file=input.files[0];
+  document.getElementById('uploadedFileName').textContent='✓ '+file.name;
+  const url=URL.createObjectURL(file);
+  if(userAudio){userAudio.pause();URL.revokeObjectURL(userAudio._blobUrl);}
+  userAudio=new Audio(url);userAudio._blobUrl=url;
+  userAudioMime = file.type || 'audio/mpeg';
+  userAudioBase64 = null;
+  const reader = new FileReader();
+  reader.onload = e => { userAudioBase64 = e.target.result.split(',')[1]; };
+  reader.readAsDataURL(file);
+  const wasOn=musicOn;
+  if(wasOn) stopMusicEngine();
+  currentTrack='user';
+  document.querySelectorAll('.music-track').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('[id^="ts-"]').forEach(s=>s.textContent='');
+  if(wasOn) setTimeout(startMusicEngine,600);
+}
+
+function setMusicVol(v){
+  musicVolume=v/100;
+  document.getElementById('musicVolVal').textContent=v+'%';
+  if(masterGain) masterGain.gain.linearRampToValueAtTime(musicVolume*0.6,audioCtx.currentTime+0.3);
+  if(userAudio) userAudio.volume=musicVolume;
+}
+
+// ===== EXPORT DIALOG =====
+const exportSelections = { audio: true, musicui: true, theme: true, texteditor: true, exportui: false };
+
+function openExportDialog(){
+  Object.keys(exportSelections).forEach(k=>{
+    const el = document.getElementById('exOpt'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(el){
+      el.classList.toggle('selected', exportSelections[k]);
+      el.querySelector('.export-option-check').textContent = exportSelections[k]?'✓':'';
+    }
+  });
+  // Show current track name in the audio option description
+  const trackDesc = document.getElementById('exAudioTrackDesc');
+  if(trackDesc){
+    const trackNames = {
+      strings:'Instrumental Strings', yaman:'Raag Yaman',
+      lofi:'Lo-fi Romantic', tabla:'Ambient Tabla Beats',
+      ambient:'Calm Ambient', user:'Uploaded Track'
+    };
+    trackDesc.textContent = 'Track: ' + (trackNames[currentTrack] || currentTrack);
+  }
+  // Grey out musicui if audio is off
+  const muiEl = document.getElementById('exOptMusicui');
+  if(muiEl) muiEl.style.opacity = exportSelections.audio ? '1' : '0.35';
+  openM('mExport');
+}
+
+function toggleExportOption(key){
+  // If audio is turned off, force musicui off too
+  if(key==='audio' && exportSelections.audio){
+    exportSelections.musicui = false;
+    const mui = document.getElementById('exOptMusicui');
+    if(mui){ mui.classList.remove('selected'); mui.querySelector('.export-option-check').textContent=''; mui.style.opacity='0.35'; }
+  }
+  // Don't allow musicui to be enabled if audio is off
+  if(key==='musicui' && !exportSelections.audio) return;
+
+  exportSelections[key] = !exportSelections[key];
+  const el = document.getElementById('exOpt'+key.charAt(0).toUpperCase()+key.slice(1));
+  if(el){
+    el.classList.toggle('selected', exportSelections[key]);
+    el.querySelector('.export-option-check').textContent = exportSelections[key]?'✓':'';
+  }
+  // Re-enable musicui opacity if audio was just turned on
+  if(key==='audio' && exportSelections.audio){
+    const mui = document.getElementById('exOptMusicui');
+    if(mui) mui.style.opacity='1';
+  }
+}
+
+// ===== EXPORT HTML =====
+function exportHTML(){
+  closeM('mExport');
+  const theme = document.body.className || '';
+  const wdJSON = JSON.stringify(wd);
+  const fsJSON = JSON.stringify(fsData);
+  const musicTrack = currentTrack;
+
+  let out = document.documentElement.outerHTML;
+
+  // ── INJECT EXPORT SETTINGS ──
+  out = out.replace(/const exportSelections\s*=\s*\{[^}]+\};/, `const exportSelections = ${JSON.stringify(exportSelections)};`);
+  out = out.replace(/<body[^>]*>/, `<body class="${theme}">`);
+  out = out.replace(/(<div id="intro-screen")[^>]*>/, '$1 >');
+  out = out.replace(/(<div id="app")[^>]*>/, '$1>');
+  out = out.replace(/(<g id="diyaSVG")[^>]*>/, '$1 opacity="0">');
+  out = out.replace(/(<g id="d[0-7]"[^>]*?) style="[^"]*"/g, '$1 style="opacity:0"');
+
+  function removeOverlay(str, id) {
+    const marker = 'id="' + id + '"';
+    const pos = str.indexOf(marker);
+    if (pos === -1) return str;
+    let start = str.lastIndexOf('<div', pos);
+    if (start === -1) return str;
+    let depth = 0, i = start;
+    while (i < str.length) {
+      if (str[i] === '<') {
+        if (str.substr(i, 4) === '<div' && (str[i+4] === ' ' || str[i+4] === '>')) { depth++; i += 4; } 
+        else if (str.substr(i, 6) === '</div>') { depth--; if (depth === 0) { i += 6; break; } i += 6; } 
+        else { i++; }
+      } else { i++; }
+    }
+    return str.slice(0, start) + str.slice(i);
+  }
+
+  function removeButton(str, classFrag) {
+    const re = new RegExp('<button(?=[^>]*' + classFrag + ')[^>]*>[\\s\\S]*?<\\/button>');
+    return str.replace(re, '');
+  }
+
+  // ── STRIP UI BUTTONS ──
+  out = removeButton(out, 'admin-capsule');
+  out = removeOverlay(out, 'mAdmin');
+
+  if (!exportSelections.exportui) {
+    out = removeOverlay(out, 'mExport');
+    out = removeButton(out, 'f-export');
+    out = out.replace(/\/\/ ===== EXPORT DIALOG =====[\s\S]*?URL\.revokeObjectURL\(url\);\s*\}/, '');
+  }
+
+  if (!exportSelections.audio) {
+     out = removeButton(out, 'f-music');
+     out = removeOverlay(out, 'mMusic');
+     out = out.replace(/\/\/ ===== MUSIC ENGINE =====[\s\S]*?(?=\/\/ ===== [A-Z])/, '');
+  } else if (!exportSelections.musicui) {
+     out = removeButton(out, 'f-music');
+     out = removeOverlay(out, 'mMusic');
+  }
+
+  if (!exportSelections.theme) {
+    out = removeButton(out, 'f-theme');
+    out = removeOverlay(out, 'mTheme');
+    out = out.replace(/\/\/ ===== THEME =====[\s\S]*?(?=\/\/ ===== [A-Z])/, '');
+  }
+
+  if (!exportSelections.texteditor) {
+    out = removeButton(out, 'f-texteditor');
+    out = removeOverlay(out, 'mTextEditor');
+    out = out.replace(/\/\/ ===== TEXT EDITOR =====[\s\S]*?(?=\/\/ ===== [A-Z])/, '');
+  }
+
+  // ── INJECT SAVED DATA ──
+  const stateScript = `<script>
+(function(){
+  localStorage.setItem('wData', JSON.stringify(${wdJSON}));
+  localStorage.setItem('wTheme', "${theme}");
+  localStorage.setItem('wMusicTrack', "${musicTrack}");
+  localStorage.setItem('wFontSpacing', JSON.stringify(${fsJSON}));
+})();
+<\/script>`;
+  out = out.replace('</head>', stateScript + '</head>');
+
+  // 🟢 THE FIX: Inject Autoplay DIRECTLY into the tap function so it is impossible to overwrite
+  if (exportSelections.audio) {
+    out = out.replace(/function enterSite\(\)\s*\{/, '$&\n  if(typeof startMusicEngine === "function") startMusicEngine();');
+  }
+
+  // 🟢 THE FIX: Delete the rogue background timer that causes the 10-15s delay ghost bug
+  out = out.replace(/setTimeout\(\(\)=>\{\s*startMusicEngine\(\);\s*\},\s*500\);/g, '');
+
+  // ── INJECT UPLOADED MP3 ──
+  if (exportSelections.audio && currentTrack === 'user' && typeof userAudioBase64 !== 'undefined' && userAudioBase64) {
+    const audioTag = `<audio id="embeddedUserAudio" src="data:${userAudioMime};base64,${userAudioBase64}" style="display:none" loop></audio>`;
+    const audioBootScript = `<script>
+(function(){
+  var _w = setInterval(function(){
+    var el = document.getElementById('embeddedUserAudio');
+    if(!el) return;
+    clearInterval(_w);
+    userAudio = el;
+    userAudio._blobUrl = null;
+    currentTrack = 'user';
+  }, 50);
+})();
+<\/script>`;
+    out = out.replace('</body>', audioTag + '\n' + audioBootScript + '\n</body>');
+  }
+
+  // ── TRIGGER DOWNLOAD ──
+  const blob = new Blob([out], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${wd.bride||'Wedding'}_${wd.groom||'Invitation'}_Wedding_Invite.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+function buildDressCodes(){
+  document.querySelectorAll('.event-item').forEach(item=>{
+    const evId = item.querySelector('.event-detail')?.id;
+    if(!evId || !dressCodes[evId]) return;
+    
+    // 1. Logic for Reception (Naked Emojis)
+    if(evId === 'ev7') {
+      const wrap = document.createElement('div');
+      wrap.className = 'emoji-reveal-wrap';
+      
+      const dress = document.createElement('span');
+        dress.className = 'individual-emoji';
+        dress.textContent = '👗';
+      
+        const indo = document.createElement('span');
+        indo.className = 'individual-emoji';
+        indo.textContent = 'Western';
+        indo.style.cssText = 'font-family:"Cinzel",serif;font-size:9px;letter-spacing:2px;color:rgba(200,152,10,0.9);';
+
+        const suit = document.createElement('span');
+        suit.className = 'individual-emoji';
+        suit.textContent = '👔';
+      
+        wrap.appendChild(dress);
+        wrap.appendChild(indo);
+        wrap.appendChild(suit);
+        item.appendChild(wrap);
+    } 
+
+    // 2. Standard Badge for others (like Haldi)
+    else {
+      const badge = document.createElement('div');
+      badge.className = 'dc-badge';
+      badge.textContent = dressCodes[evId];
+      item.appendChild(badge);
+    }
+    
+    // 3. Add "Reveal Theme" teaser to BOTH
+    if(evId === 'ev3' || evId === 'ev7') {
+      const teaser = document.createElement('div');
+      teaser.className = 'reveal-badge';
+      teaser.textContent = 'Reveal Theme';
+      item.appendChild(teaser);
+    }
+    
+    item.style.cursor = 'pointer';
+    item.onclick = function() {
+      this.classList.toggle('active-' + evId);
+    };
+  });
+
+  if(typeof fsApplyAll === "function") fsApplyAll();
+}
+
+
+// ===== INIT =====
+loadSavedData();
+buildDressCodes();
+fsLoad();
+initSparkles();
+(function(){
+  const savedTrack=localStorage.getItem('wMusicTrack')||'strings';
+  currentTrack=savedTrack;
+  const savedMusicOn=localStorage.getItem('wMusicOn');
+  if(savedMusicOn==='1'){
+    // Try to auto-start immediately (browsers may block until user interaction)
+    setTimeout(()=>{
+      startMusicEngine();
+    }, 500);
+  }
+})();
+
+// Start diya kindle sequence
+setTimeout(kindleDiyas, 500);
+</script>
+</body>
+</html>
